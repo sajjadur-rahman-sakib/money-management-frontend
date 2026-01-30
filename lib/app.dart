@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/bloc/auth_bloc.dart';
-import 'package:money/screens/signup_screen.dart';
+import 'package:money/screens/login_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
       create: (context) => AuthBloc(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: SignupScreen(),
+        home: LoginScreen(),
       ),
     );
   }

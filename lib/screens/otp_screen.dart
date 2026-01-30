@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/bloc/auth_bloc.dart';
-import 'package:money/screens/home_screen.dart';
+import 'package:money/screens/login_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -24,7 +24,7 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FC), // Matches Signup background
+      backgroundColor: const Color(0xFFF8F9FC),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -42,7 +42,7 @@ class _OtpScreenState extends State<OtpScreen> {
           if (state is OtpVerified) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
             );
           } else if (state is AuthError) {
             ScaffoldMessenger.of(
@@ -89,7 +89,6 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               const SizedBox(height: 120),
 
-              // --- Styled OTP Text Field ---
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -110,8 +109,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1E2D4A),
-                    letterSpacing:
-                        8.0, // Adds space between digits for better look
+                    letterSpacing: 8.0,
                   ),
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly,
@@ -130,7 +128,6 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               const SizedBox(height: 60),
 
-              // --- Resend Link ---
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   return TextButton(
@@ -145,7 +142,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       'Resend OTP',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF9DB2CE), // Matches Signup Primary
+                        color: Color(0xFF9DB2CE),
                         fontSize: 16,
                       ),
                     ),
@@ -154,7 +151,6 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               const SizedBox(height: 40),
 
-              // --- Verify Button ---
               BlocBuilder<AuthBloc, AuthState>(
                 builder: (context, state) {
                   return SizedBox(

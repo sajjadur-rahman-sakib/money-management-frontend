@@ -21,6 +21,11 @@ class VerifyOtpEvent extends AuthEvent {
   VerifyOtpEvent(this.email, this.otp);
 }
 
+class LoginEvent extends AuthEvent {
+  final String email, password;
+  LoginEvent(this.email, this.password);
+}
+
 abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
@@ -34,6 +39,11 @@ class OtpSent extends AuthState {}
 class OtpVerified extends AuthState {
   final User user;
   OtpVerified(this.user);
+}
+
+class LoginSuccess extends AuthState {
+  final Map<String, dynamic> user;
+  LoginSuccess(this.user);
 }
 
 class AuthError extends AuthState {
@@ -100,6 +110,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } catch (e) {
         emit(AuthError(e.toString()));
+      }
+    });
+
+    on<LoginEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        var user = await _authController.login(event.email, event.password);
+        if (user != null) {
+          emit(LoginSuccess(user));
+        } else {
+          emit(AuthError('Login failed - check logs'));
+        }
+      } catch (e) {
+        emit(AuthError('Login error: ${e.toString()}'));
       }
     });
   }

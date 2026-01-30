@@ -69,4 +69,21 @@ class AuthService {
       return 'Verify OTP error: ${e.toString()}';
     }
   }
+
+  Future<Map<String, dynamic>?> login(String email, String password) async {
+    try {
+      var response = await http.post(
+        AppUrls.uri(AppUrls.login),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body);
+      }
+
+      return null;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

@@ -8,6 +8,7 @@ class AppUrls {
   static const String signup = '/signup';
   static const String resendOtp = '/resend-otp';
   static const String verifyOtp = '/verify-otp';
+  static const String login = '/login';
 
   static Uri uri(String path) => Uri.parse('$baseUrl$path');
 

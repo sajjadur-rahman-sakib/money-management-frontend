@@ -36,4 +36,14 @@ class AuthController {
   Future<String?> verifyOtp(String email, String otp) async {
     return await _authService.verifyOtp(email, otp);
   }
+
+  bool validateLogin(String email, String password) {
+    if (email.isEmpty || password.isEmpty) return false;
+    return true;
+  }
+
+  Future<Map<String, dynamic>?> login(String email, String password) async {
+    if (!validateLogin(email, password)) return null;
+    return await _authService.login(email, password);
+  }
 }

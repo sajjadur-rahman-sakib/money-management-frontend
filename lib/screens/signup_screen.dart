@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:money/bloc/auth_bloc.dart';
+import 'package:money/screens/login_screen.dart';
 import 'package:money/screens/otp_screen.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 80, // Optimized for upload
+      imageQuality: 80,
     );
     if (pickedFile != null) {
       setState(() => _image = File(pickedFile.path));
@@ -34,7 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F9FC), // Soft background from image
+      backgroundColor: const Color(0xFFF7F9FC),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -79,7 +80,6 @@ class _SignupScreenState extends State<SignupScreen> {
               children: [
                 const SizedBox(height: 20),
 
-                // --- DESIGNED IMAGE PICKER SECTION ---
                 GestureDetector(
                   onTap: _pickImage,
                   child: Center(
@@ -99,7 +99,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       ),
                       child: Stack(
                         children: [
-                          // Profile Image or Placeholder
                           Center(
                             child: _image != null
                                 ? ClipRRect(
@@ -130,7 +129,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                     ],
                                   ),
                           ),
-                          // Plus Icon Badge
                           Positioned(
                             bottom: 5,
                             right: 5,
@@ -152,7 +150,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
                 const SizedBox(height: 50),
 
-                // --- INPUT FIELDS ---
                 _buildInput(
                   controller: _nameController,
                   hint: 'Username',
@@ -175,9 +172,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   validator: (val) => val!.isEmpty ? 'Enter password' : null,
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 80),
 
-                // --- SIGNUP BUTTON ---
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
                     return SizedBox(
@@ -185,9 +181,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       height: 58,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(
-                            0xFF9DB2CE,
-                          ), // Muted Blue from image
+                          backgroundColor: const Color(0xFF9DB2CE),
                           shape: const StadiumBorder(),
                           elevation: 6,
                           shadowColor: const Color(0xFF9DB2CE).withOpacity(0.5),
@@ -233,9 +227,8 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
 
-                const SizedBox(height: 30),
+                const SizedBox(height: 60),
 
-                // --- FOOTER ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -244,9 +237,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => LoginScreen()),
+                      ),
                       child: const Text(
-                        "Sign In",
+                        "Login",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1E2D4A),
@@ -264,7 +260,6 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  // --- REUSABLE SHADOWED INPUT DESIGN ---
   Widget _buildInput({
     required TextEditingController controller,
     required String hint,
