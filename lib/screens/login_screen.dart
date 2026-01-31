@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/screens/signup_screen.dart';
 import '../bloc/auth_bloc.dart';
-import 'home_screen.dart';
+import 'book_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

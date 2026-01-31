@@ -5,10 +5,14 @@ class AppUrls {
 
   static const String apiPrefix = '';
 
-  static const String signup = '/signup';
+  static const String signup = '/user-signup';
   static const String resendOtp = '/resend-otp';
   static const String verifyOtp = '/verify-otp';
-  static const String login = '/login';
+  static const String login = '/user-login';
+  static const String createBook = '/create-book';
+  static const String getBooks = '/get-books';
+  static const String createTransaction = '/create-transaction';
+  static const String bookDetails = '/book-details';
 
   static Uri uri(String path) => Uri.parse('$baseUrl$path');
 

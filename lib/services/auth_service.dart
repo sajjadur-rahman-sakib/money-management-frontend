@@ -2,8 +2,29 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:money/utils/app_urls.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+  }
+
+  Future<bool> verifyToken() async {
+    String? token = await getToken();
+    if (token == null) return false;
+    var response = await http.get(
+      AppUrls.uri('/verify-token'),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+    return response.statusCode == 200;
+  }
+
   Future<String?> signup(
     String name,
     String email,
