@@ -117,10 +117,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       try {
         var user = await _authController.login(event.email, event.password);
-        if (user != null) {
+        if (user != null && user['token'] != null) {
+          // Save the token for future requests
+          await _authController.saveToken(user['token']);
+          // Save user data without token
+          var userData = Map<String, dynamic>.from(user)..remove('token');
+          await _authController.saveUser(userData);
           emit(LoginSuccess(user));
         } else {
-          emit(AuthError('Login failed - check logs'));
+          emit(
+            AuthError('Login failed - invalid credentials or missing token'),
+          );
         }
       } catch (e) {
         emit(AuthError('Login error: ${e.toString()}'));

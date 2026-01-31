@@ -46,4 +46,12 @@ class AuthController {
     if (!validateLogin(email, password)) return null;
     return await _authService.login(email, password);
   }
+
+  Future<void> saveToken(String token) async {
+    await _authService.saveToken(token);
+  }
+
+  Future<void> saveUser(Map<String, dynamic> user) async {
+    await _authService.saveUser(user);
+  }
 }

@@ -20,7 +20,7 @@ class Book {
       id: json['id'],
       name: json['name'],
       userId: json['user_id'],
-      balance: json['balance'],
+      balance: (json['balance'] as num).toDouble(),
       createdAt: DateTime.parse(json['created_at']),
       updatedAt: DateTime.parse(json['updated_at']),
     );

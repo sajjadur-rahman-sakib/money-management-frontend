@@ -7,12 +7,30 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
+    final token = prefs.getString('token');
+    print('Retrieved token: $token');
+    return token;
   }
 
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
+    print('Saving token: $token');
     await prefs.setString('token', token);
+  }
+
+  Future<void> saveUser(Map<String, dynamic> user) async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = jsonEncode(user);
+    await prefs.setString('user', userJson);
+  }
+
+  Future<Map<String, dynamic>?> getUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userJson = prefs.getString('user');
+    if (userJson != null) {
+      return jsonDecode(userJson);
+    }
+    return null;
   }
 
   Future<bool> verifyToken() async {
@@ -106,5 +124,11 @@ class AuthService {
     } catch (e) {
       rethrow;
     }
+  }
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+    await prefs.remove('user');
   }
 }

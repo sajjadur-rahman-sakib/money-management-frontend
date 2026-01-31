@@ -91,6 +91,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
+                            // ignore: deprecated_member_use
                             color: Colors.black.withOpacity(0.08),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
@@ -152,13 +153,13 @@ class _SignupScreenState extends State<SignupScreen> {
 
                 _buildInput(
                   controller: _nameController,
-                  hint: 'Username',
+                  hint: 'Name',
                   validator: (val) => val!.isEmpty ? 'Enter name' : null,
                 ),
                 const SizedBox(height: 18),
                 _buildInput(
                   controller: _emailController,
-                  hint: 'email',
+                  hint: 'Email',
                   validator: (val) => val!.isEmpty ? 'Enter email' : null,
                 ),
                 const SizedBox(height: 18),
@@ -184,6 +185,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           backgroundColor: const Color(0xFF9DB2CE),
                           shape: const StadiumBorder(),
                           elevation: 6,
+                          // ignore: deprecated_member_use
                           shadowColor: const Color(0xFF9DB2CE).withOpacity(0.5),
                         ),
                         onPressed: state is AuthLoading
@@ -274,6 +276,7 @@ class _SignupScreenState extends State<SignupScreen> {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.04),
             blurRadius: 12,
             offset: const Offset(0, 6),

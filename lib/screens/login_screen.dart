@@ -44,7 +44,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => HomeScreen(user: state.user),
+                builder: (context) => BookScreen(user: state.user),
               ),
             );
           } else if (state is AuthError) {
@@ -73,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 _buildShadowField(
                   controller: _emailController,
-                  hint: 'email',
+                  hint: 'Email',
                   validator: (value) => value!.isEmpty ? 'Enter email' : null,
                 ),
                 const SizedBox(height: 20),
@@ -177,6 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.04),
             blurRadius: 15,
             offset: const Offset(0, 8),

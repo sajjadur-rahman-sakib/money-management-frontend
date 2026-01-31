@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:money/bloc/book_bloc.dart';
+import 'package:money/models/book_model.dart';
+import 'package:money/screens/profile_screen.dart';
+import 'package:money/screens/transaction_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class BookScreen extends StatefulWidget {
   final Map<String, dynamic> user;
-  const HomeScreen({super.key, required this.user});
+  const BookScreen({super.key, required this.user});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<BookScreen> createState() => _BookScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _BookScreenState extends State<BookScreen> {
   @override
   void initState() {
     super.initState();
@@ -17,13 +21,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showCreateBookDialog() {
-    final _nameController = TextEditingController();
+    final nameController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Create Book'),
         content: TextField(
-          controller: _nameController,
+          controller: nameController,
           decoration: InputDecoration(labelText: 'Book Name'),
         ),
         actions: [
@@ -33,9 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           TextButton(
             onPressed: () {
-              if (_nameController.text.isNotEmpty) {
+              if (nameController.text.isNotEmpty) {
                 context.read<BookBloc>().add(
-                  CreateBookEvent(_nameController.text),
+                  CreateBookEvent(nameController.text),
                 );
                 Navigator.pop(context);
               }
@@ -53,6 +57,17 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: Text('Home'),
         actions: [
+          IconButton(
+            icon: Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(user: widget.user),
+                ),
+              );
+            },
+          ),
           IconButton(icon: Icon(Icons.add), onPressed: _showCreateBookDialog),
         ],
       ),
@@ -69,13 +84,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(book.name),
                   subtitle: Text('Balance: ${book.balance}'),
                   onTap: () {
+                    final bookBloc = context.read<BookBloc>();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
-                            BookDetailsScreen(bookId: book.id),
+                            TransactionScreen(bookId: book.id),
                       ),
-                    );
+                    ).then((_) => bookBloc.add(FetchBooksEvent()));
                   },
                 );
               },
