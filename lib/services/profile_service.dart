@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:money/services/auth_service.dart';
 import 'package:money/utils/app_urls.dart';
+import 'package:money/utils/error_parser.dart';
 
 class ProfileService {
   final AuthService _authService = AuthService();
@@ -16,7 +18,37 @@ class ProfileService {
       return jsonDecode(response.body);
     }
     throw Exception(
-      'Failed to load profile: ${response.statusCode} - ${response.body}',
+      parseErrorMessage(response.body, fallback: 'Failed to load profile'),
+    );
+  }
+
+  Future<Map<String, dynamic>> updateProfile({
+    String? name,
+    File? picture,
+  }) async {
+    String? token = await _authService.getToken();
+    var request = http.MultipartRequest(
+      'POST',
+      AppUrls.uri(AppUrls.updateProfile),
+    );
+    request.headers['Authorization'] = 'Bearer $token';
+
+    if (name != null && name.isNotEmpty) {
+      request.fields['name'] = name;
+    }
+    if (picture != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath('picture', picture.path),
+      );
+    }
+
+    var response = await request.send();
+    var responseBody = await response.stream.bytesToString();
+    if (response.statusCode == 200) {
+      return jsonDecode(responseBody) as Map<String, dynamic>;
+    }
+    throw Exception(
+      parseErrorMessage(responseBody, fallback: 'Failed to update profile'),
     );
   }
 }

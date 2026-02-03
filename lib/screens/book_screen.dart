@@ -146,6 +146,7 @@ class _BookScreenState extends State<BookScreen> {
                     return const Center(child: Text('No books'));
                   }
                   return ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 20),
                     itemCount: state.books.length,
                     itemBuilder: (context, index) {
                       Book book = state.books[index];
@@ -161,11 +162,45 @@ class _BookScreenState extends State<BookScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showCreateBookDialog,
-        backgroundColor: const Color(0xFF9DB2CE),
-        shape: const CircleBorder(),
-        child: const Icon(Icons.add, color: Color(0xFF1E2D4A), size: 28),
+      bottomNavigationBar: _buildBottomBar(),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            // ignore: deprecated_member_use
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton.icon(
+            onPressed: _showCreateBookDialog,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF9DB2CE),
+              foregroundColor: const Color(0xFF1E2D4A),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+            ),
+            icon: const Icon(Icons.add, size: 24),
+            label: const Text(
+              "ADD NEW BOOK",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
       ),
     );
   }

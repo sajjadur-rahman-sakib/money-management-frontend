@@ -18,6 +18,7 @@ class AppUrls {
   static const String updateTransaction = '/update-transaction';
   static const String deleteTransaction = '/delete-transaction';
   static const String profile = '/user-profile';
+  static const String updateProfile = '/update-profile';
   static const String changePassword = '/change-password';
 
   static Uri uri(String path) => Uri.parse('$baseUrl$path');

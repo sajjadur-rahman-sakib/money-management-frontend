@@ -4,6 +4,7 @@ import 'package:money/bloc/profile_bloc.dart';
 import 'package:money/services/auth_service.dart';
 import 'package:money/screens/login_screen.dart';
 import 'package:money/screens/change_password.dart';
+import 'package:money/screens/edit_profile.dart';
 import 'package:money/utils/app_urls.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -43,6 +44,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Map<String, dynamic>? profileMap;
           if (state is ProfileLoaded) {
             profileMap = state.profile;
+          } else if (state is ProfileUpdated) {
+            profileMap = state.profile;
           } else if (widget.user != null) {
             profileMap = widget.user;
           }
@@ -66,57 +69,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     const SizedBox(height: 20),
                     // Profile Image Section
-                    Stack(
-                      children: [
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: const Color(0xFF9DB2CE),
-                              width: 3,
+                    GestureDetector(
+                      onTap: () async {
+                        final updated = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditProfileScreen(profile: profileMap!),
+                          ),
+                        );
+                        if (updated != null) {
+                          // ignore: use_build_context_synchronously
+                          context.read<ProfileBloc>().add(FetchProfileEvent());
+                        }
+                      },
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFF9DB2CE),
+                                width: 3,
+                              ),
+                              color: const Color(0xFFE8EDF5),
+                              image: imageUrl != null
+                                  ? DecorationImage(
+                                      image: NetworkImage(imageUrl),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : null,
                             ),
-                            color: const Color(0xFFE8EDF5),
-                            image: imageUrl != null
-                                ? DecorationImage(
-                                    image: NetworkImage(imageUrl),
-                                    fit: BoxFit.cover,
+                            child: imageUrl == null
+                                ? const Icon(
+                                    Icons.person,
+                                    size: 60,
+                                    color: Color(0xFF2D4379),
                                   )
                                 : null,
                           ),
-                          child: imageUrl == null
-                              ? const Icon(
-                                  Icons.person,
-                                  size: 60,
-                                  color: Color(0xFF2D4379),
-                                )
-                              : null,
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 4,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.edit,
-                              size: 18,
-                              color: Color(0xFF2D4379),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 4,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.edit,
+                                size: 18,
+                                color: Color(0xFF2D4379),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -134,13 +152,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: Icons.person_outline,
                       text: userName,
                       trailing: Icons.edit_outlined,
-                      onTap: () {},
+                      onTap: () async {
+                        final updated = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                EditProfileScreen(profile: profileMap!),
+                          ),
+                        );
+                        if (updated != null) {
+                          // ignore: use_build_context_synchronously
+                          context.read<ProfileBloc>().add(FetchProfileEvent());
+                        }
+                      },
                     ),
                     const SizedBox(height: 16),
                     _buildInfoCard(
                       icon: Icons.email_outlined,
                       text: userEmail,
-                      trailing: Icons.edit_outlined,
                       onTap: () {},
                     ),
                     const SizedBox(height: 16),

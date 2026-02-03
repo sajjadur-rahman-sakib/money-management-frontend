@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:money/services/auth_service.dart';
 import 'package:money/utils/app_urls.dart';
+import 'package:money/utils/error_parser.dart';
 
 class TransactionService {
   final AuthService _authService = AuthService();
@@ -19,7 +20,9 @@ class TransactionService {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     }
-    throw Exception('Failed to load book details');
+    throw Exception(
+      parseErrorMessage(response.body, fallback: 'Failed to load book details'),
+    );
   }
 
   Future<void> createTransaction(
@@ -43,7 +46,12 @@ class TransactionService {
       }),
     );
     if (response.statusCode != 200) {
-      throw Exception('Failed to create transaction');
+      throw Exception(
+        parseErrorMessage(
+          response.body,
+          fallback: 'Failed to create transaction',
+        ),
+      );
     }
   }
 
@@ -66,7 +74,12 @@ class TransactionService {
       }),
     );
     if (response.statusCode != 200) {
-      throw Exception('Failed to update transaction');
+      throw Exception(
+        parseErrorMessage(
+          response.body,
+          fallback: 'Failed to update transaction',
+        ),
+      );
     }
   }
 
@@ -81,7 +94,12 @@ class TransactionService {
       body: jsonEncode({'transaction_id': transactionId}),
     );
     if (response.statusCode != 200) {
-      throw Exception('Failed to delete transaction');
+      throw Exception(
+        parseErrorMessage(
+          response.body,
+          fallback: 'Failed to delete transaction',
+        ),
+      );
     }
   }
 }

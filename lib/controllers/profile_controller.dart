@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:money/services/profile_service.dart';
 
 class ProfileController {
@@ -5,5 +6,12 @@ class ProfileController {
 
   Future<Map<String, dynamic>> fetchProfile() async {
     return await _profileService.getProfile();
+  }
+
+  Future<Map<String, dynamic>> updateProfile({
+    String? name,
+    File? picture,
+  }) async {
+    return await _profileService.updateProfile(name: name, picture: picture);
   }
 }

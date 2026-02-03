@@ -1,9 +1,18 @@
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/controllers/profile_controller.dart';
+import 'package:money/services/auth_service.dart';
 
 abstract class ProfileEvent {}
 
 class FetchProfileEvent extends ProfileEvent {}
+
+class UpdateProfileEvent extends ProfileEvent {
+  final String? name;
+  final File? picture;
+
+  UpdateProfileEvent({this.name, this.picture});
+}
 
 abstract class ProfileState {}
 
@@ -11,9 +20,16 @@ class ProfileInitial extends ProfileState {}
 
 class ProfileLoading extends ProfileState {}
 
+class ProfileUpdating extends ProfileState {}
+
 class ProfileLoaded extends ProfileState {
   final Map<String, dynamic> profile;
   ProfileLoaded(this.profile);
+}
+
+class ProfileUpdated extends ProfileState {
+  final Map<String, dynamic> profile;
+  ProfileUpdated(this.profile);
 }
 
 class ProfileError extends ProfileState {
@@ -21,8 +37,14 @@ class ProfileError extends ProfileState {
   ProfileError(this.message);
 }
 
+class ProfileUpdateError extends ProfileState {
+  final String message;
+  ProfileUpdateError(this.message);
+}
+
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileController _controller = ProfileController();
+  final AuthService _authService = AuthService();
 
   ProfileBloc() : super(ProfileInitial()) {
     on<FetchProfileEvent>((event, emit) async {
@@ -32,6 +54,20 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         emit(ProfileLoaded(profile));
       } catch (e) {
         emit(ProfileError(e.toString()));
+      }
+    });
+
+    on<UpdateProfileEvent>((event, emit) async {
+      emit(ProfileUpdating());
+      try {
+        var profile = await _controller.updateProfile(
+          name: event.name,
+          picture: event.picture,
+        );
+        await _authService.saveUser(profile);
+        emit(ProfileUpdated(profile));
+      } catch (e) {
+        emit(ProfileUpdateError(e.toString()));
       }
     });
   }

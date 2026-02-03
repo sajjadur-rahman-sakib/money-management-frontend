@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:money/utils/app_urls.dart';
+import 'package:money/utils/error_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -65,7 +66,7 @@ class AuthService {
       if (response.statusCode == 200) {
         return null;
       } else {
-        return 'Signup failed: ${response.statusCode} - $responseBody';
+        return parseErrorMessage(responseBody, fallback: 'Signup failed');
       }
     } catch (e) {
       return 'Signup error: ${e.toString()}';
@@ -83,7 +84,7 @@ class AuthService {
       if (response.statusCode == 200) {
         return null;
       } else {
-        return 'Resend OTP failed: ${response.statusCode} - ${response.body}';
+        return parseErrorMessage(response.body, fallback: 'Resend OTP failed');
       }
     } catch (e) {
       return 'Resend OTP error: ${e.toString()}';
@@ -100,7 +101,7 @@ class AuthService {
       if (response.statusCode == 200) {
         return null;
       } else {
-        return 'Verify OTP failed: ${response.statusCode} - ${response.body}';
+        return parseErrorMessage(response.body, fallback: 'Verify OTP failed');
       }
     } catch (e) {
       return 'Verify OTP error: ${e.toString()}';
@@ -147,7 +148,10 @@ class AuthService {
       if (response.statusCode == 200) {
         return null;
       } else {
-        return 'Change password failed: ${response.statusCode} - ${response.body}';
+        return parseErrorMessage(
+          response.body,
+          fallback: 'Change password failed',
+        );
       }
     } catch (e) {
       return 'Change password error: ${e.toString()}';

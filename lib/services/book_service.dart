@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:money/models/book_model.dart';
 import 'package:money/services/auth_service.dart';
 import 'package:money/utils/app_urls.dart';
+import 'package:money/utils/error_parser.dart';
 
 class BookService {
   final AuthService _authService = AuthService();
@@ -18,7 +19,7 @@ class BookService {
       return data.map((e) => Book.fromJson(e)).toList();
     }
     throw Exception(
-      'Failed to load books: ${response.statusCode} - ${response.body}',
+      parseErrorMessage(response.body, fallback: 'Failed to load books'),
     );
   }
 
@@ -36,7 +37,7 @@ class BookService {
       return Book.fromJson(jsonDecode(response.body));
     }
     throw Exception(
-      'Failed to create book: ${response.statusCode} - ${response.body}',
+      parseErrorMessage(response.body, fallback: 'Failed to create book'),
     );
   }
 
@@ -54,7 +55,7 @@ class BookService {
       return Book.fromJson(jsonDecode(response.body));
     }
     throw Exception(
-      'Failed to update book: ${response.statusCode} - ${response.body}',
+      parseErrorMessage(response.body, fallback: 'Failed to update book'),
     );
   }
 
@@ -70,7 +71,7 @@ class BookService {
     );
     if (response.statusCode != 200) {
       throw Exception(
-        'Failed to delete book: ${response.statusCode} - ${response.body}',
+        parseErrorMessage(response.body, fallback: 'Failed to delete book'),
       );
     }
   }
