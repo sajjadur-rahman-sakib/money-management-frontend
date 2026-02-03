@@ -20,4 +20,20 @@ class TransactionController {
       description,
     );
   }
+
+  Future<void> updateTransaction(
+    String transactionId,
+    double amount,
+    String description,
+  ) async {
+    await _transactionService.updateTransaction(
+      transactionId,
+      amount,
+      description,
+    );
+  }
+
+  Future<void> deleteTransaction(String transactionId) async {
+    await _transactionService.deleteTransaction(transactionId);
+  }
 }

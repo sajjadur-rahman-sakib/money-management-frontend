@@ -11,8 +11,12 @@ class AppUrls {
   static const String login = '/user-login';
   static const String createBook = '/create-book';
   static const String getBooks = '/get-books';
+  static const String updateBook = '/update-book';
+  static const String deleteBook = '/delete-book';
   static const String createTransaction = '/create-transaction';
   static const String bookDetails = '/book-details';
+  static const String updateTransaction = '/update-transaction';
+  static const String deleteTransaction = '/delete-transaction';
   static const String profile = '/user-profile';
   static const String changePassword = '/change-password';
 

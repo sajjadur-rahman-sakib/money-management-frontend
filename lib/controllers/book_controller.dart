@@ -11,4 +11,12 @@ class BookController {
   Future<Book> createBook(String name) async {
     return await _bookService.createBook(name);
   }
+
+  Future<Book> updateBook(String bookId, String name) async {
+    return await _bookService.updateBook(bookId, name);
+  }
+
+  Future<void> deleteBook(String bookId) async {
+    await _bookService.deleteBook(bookId);
+  }
 }

@@ -46,4 +46,42 @@ class TransactionService {
       throw Exception('Failed to create transaction');
     }
   }
+
+  Future<void> updateTransaction(
+    String transactionId,
+    double amount,
+    String description,
+  ) async {
+    String? token = await _authService.getToken();
+    var response = await http.post(
+      AppUrls.uri(AppUrls.updateTransaction),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'transaction_id': transactionId,
+        'amount': amount,
+        'description': description,
+      }),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update transaction');
+    }
+  }
+
+  Future<void> deleteTransaction(String transactionId) async {
+    String? token = await _authService.getToken();
+    var response = await http.post(
+      AppUrls.uri(AppUrls.deleteTransaction),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'transaction_id': transactionId}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete transaction');
+    }
+  }
 }

@@ -43,4 +43,39 @@ class BookService {
       'Failed to create book: ${response.statusCode} - ${response.body}',
     );
   }
+
+  Future<Book> updateBook(String bookId, String name) async {
+    String? token = await _authService.getToken();
+    var response = await http.post(
+      AppUrls.uri(AppUrls.updateBook),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'book_id': bookId, 'name': name}),
+    );
+    if (response.statusCode == 200) {
+      return Book.fromJson(jsonDecode(response.body));
+    }
+    throw Exception(
+      'Failed to update book: ${response.statusCode} - ${response.body}',
+    );
+  }
+
+  Future<void> deleteBook(String bookId) async {
+    String? token = await _authService.getToken();
+    var response = await http.post(
+      AppUrls.uri(AppUrls.deleteBook),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({'book_id': bookId}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Failed to delete book: ${response.statusCode} - ${response.body}',
+      );
+    }
+  }
 }

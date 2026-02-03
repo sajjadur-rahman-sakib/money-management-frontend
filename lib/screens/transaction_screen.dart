@@ -67,6 +67,88 @@ class _TransactionScreenState extends State<TransactionScreen> {
     );
   }
 
+  void _showRenameTransactionDialog(
+    String transactionId,
+    double currentAmount,
+    String? currentDescription,
+  ) {
+    final amountController = TextEditingController(
+      text: currentAmount.toString(),
+    );
+    final descriptionController = TextEditingController(
+      text: currentDescription ?? '',
+    );
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Rename Transaction'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: amountController,
+              decoration: InputDecoration(labelText: 'Amount'),
+              keyboardType: TextInputType.number,
+            ),
+            TextField(
+              controller: descriptionController,
+              decoration: InputDecoration(labelText: 'Description'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final amount = double.tryParse(amountController.text);
+              if (amount == null || amount <= 0) {
+                return;
+              }
+              context.read<BookBloc>().add(
+                    UpdateTransactionEvent(
+                      widget.bookId,
+                      transactionId,
+                      amount,
+                      descriptionController.text,
+                    ),
+                  );
+              Navigator.pop(context);
+            },
+            child: Text('Update'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteTransaction(String transactionId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Transaction'),
+        content: Text('Are you sure you want to delete this transaction?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<BookBloc>().add(
+                    DeleteTransactionEvent(widget.bookId, transactionId),
+                  );
+              Navigator.pop(context);
+            },
+            child: Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -96,6 +178,23 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 return ListTile(
                   title: Text(t['description'] ?? 'No description'),
                   subtitle: Text('Amount: ${t['amount']}'),
+                  trailing: PopupMenuButton<String>(
+                    onSelected: (value) {
+                      if (value == 'rename') {
+                        _showRenameTransactionDialog(
+                          t['id'].toString(),
+                          (t['amount'] as num).toDouble(),
+                          t['description'],
+                        );
+                      } else if (value == 'delete') {
+                        _confirmDeleteTransaction(t['id'].toString());
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(value: 'rename', child: Text('Rename')),
+                      PopupMenuItem(value: 'delete', child: Text('Delete')),
+                    ],
+                  ),
                 );
               },
             );

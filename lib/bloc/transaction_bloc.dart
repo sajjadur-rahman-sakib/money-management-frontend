@@ -15,6 +15,25 @@ class CreateTransactionEvent extends TransactionEvent {
   CreateTransactionEvent(this.bookId, this.type, this.amount, this.description);
 }
 
+class UpdateTransactionEvent extends TransactionEvent {
+  final String bookId;
+  final String transactionId;
+  final double amount;
+  final String description;
+  UpdateTransactionEvent(
+    this.bookId,
+    this.transactionId,
+    this.amount,
+    this.description,
+  );
+}
+
+class DeleteTransactionEvent extends TransactionEvent {
+  final String bookId;
+  final String transactionId;
+  DeleteTransactionEvent(this.bookId, this.transactionId);
+}
+
 abstract class TransactionState {}
 
 class TransactionInitial extends TransactionState {}
@@ -54,6 +73,30 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
           event.amount,
           event.description,
         );
+        add(FetchTransactionEvent(event.bookId));
+      } catch (e) {
+        emit(TransactionError(e.toString()));
+      }
+    });
+
+    on<UpdateTransactionEvent>((event, emit) async {
+      emit(TransactionLoading());
+      try {
+        await _controller.updateTransaction(
+          event.transactionId,
+          event.amount,
+          event.description,
+        );
+        add(FetchTransactionEvent(event.bookId));
+      } catch (e) {
+        emit(TransactionError(e.toString()));
+      }
+    });
+
+    on<DeleteTransactionEvent>((event, emit) async {
+      emit(TransactionLoading());
+      try {
+        await _controller.deleteTransaction(event.transactionId);
         add(FetchTransactionEvent(event.bookId));
       } catch (e) {
         emit(TransactionError(e.toString()));

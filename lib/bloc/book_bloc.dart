@@ -12,6 +12,17 @@ class CreateBookEvent extends BookEvent {
   CreateBookEvent(this.name);
 }
 
+class UpdateBookEvent extends BookEvent {
+  final String bookId;
+  final String name;
+  UpdateBookEvent(this.bookId, this.name);
+}
+
+class DeleteBookEvent extends BookEvent {
+  final String bookId;
+  DeleteBookEvent(this.bookId);
+}
+
 class FetchBookDetailsEvent extends BookEvent {
   final String bookId;
   FetchBookDetailsEvent(this.bookId);
@@ -22,6 +33,25 @@ class CreateTransactionEvent extends BookEvent {
   final double amount;
   final String? description;
   CreateTransactionEvent(this.bookId, this.type, this.amount, this.description);
+}
+
+class UpdateTransactionEvent extends BookEvent {
+  final String bookId;
+  final String transactionId;
+  final double amount;
+  final String description;
+  UpdateTransactionEvent(
+    this.bookId,
+    this.transactionId,
+    this.amount,
+    this.description,
+  );
+}
+
+class DeleteTransactionEvent extends BookEvent {
+  final String bookId;
+  final String transactionId;
+  DeleteTransactionEvent(this.bookId, this.transactionId);
 }
 
 abstract class BookState {}
@@ -80,6 +110,26 @@ class BookBloc extends Bloc<BookEvent, BookState> {
       }
     });
 
+    on<UpdateBookEvent>((event, emit) async {
+      emit(BookLoading());
+      try {
+        await _bookController.updateBook(event.bookId, event.name);
+        add(FetchBooksEvent());
+      } catch (e) {
+        emit(BookError(e.toString()));
+      }
+    });
+
+    on<DeleteBookEvent>((event, emit) async {
+      emit(BookLoading());
+      try {
+        await _bookController.deleteBook(event.bookId);
+        add(FetchBooksEvent());
+      } catch (e) {
+        emit(BookError(e.toString()));
+      }
+    });
+
     on<CreateTransactionEvent>((event, emit) async {
       emit(BookLoading());
       try {
@@ -89,6 +139,30 @@ class BookBloc extends Bloc<BookEvent, BookState> {
           event.amount,
           event.description,
         );
+        add(FetchBookDetailsEvent(event.bookId));
+      } catch (e) {
+        emit(BookError(e.toString()));
+      }
+    });
+
+    on<UpdateTransactionEvent>((event, emit) async {
+      emit(BookLoading());
+      try {
+        await _transactionController.updateTransaction(
+          event.transactionId,
+          event.amount,
+          event.description,
+        );
+        add(FetchBookDetailsEvent(event.bookId));
+      } catch (e) {
+        emit(BookError(e.toString()));
+      }
+    });
+
+    on<DeleteTransactionEvent>((event, emit) async {
+      emit(BookLoading());
+      try {
+        await _transactionController.deleteTransaction(event.transactionId);
         add(FetchBookDetailsEvent(event.bookId));
       } catch (e) {
         emit(BookError(e.toString()));

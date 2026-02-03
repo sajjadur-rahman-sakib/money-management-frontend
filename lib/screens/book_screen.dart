@@ -51,6 +51,60 @@ class _BookScreenState extends State<BookScreen> {
     );
   }
 
+  void _showRenameBookDialog(String bookId, String currentName) {
+    final nameController = TextEditingController(text: currentName);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Rename Book'),
+        content: TextField(
+          controller: nameController,
+          decoration: InputDecoration(labelText: 'Book Name'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              if (nameController.text.isNotEmpty) {
+                context.read<BookBloc>().add(
+                  UpdateBookEvent(bookId, nameController.text),
+                );
+                Navigator.pop(context);
+              }
+            },
+            child: Text('Update'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteBook(String bookId) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Delete Book'),
+        content: Text('Are you sure you want to delete this book?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<BookBloc>().add(DeleteBookEvent(bookId));
+              Navigator.pop(context);
+            },
+            child: Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,6 +137,19 @@ class _BookScreenState extends State<BookScreen> {
                 return ListTile(
                   title: Text(book.name),
                   subtitle: Text('Balance: ${book.balance}'),
+                  trailing: PopupMenuButton<String>(
+                    onSelected: (value) {
+                      if (value == 'rename') {
+                        _showRenameBookDialog(book.id, book.name);
+                      } else if (value == 'delete') {
+                        _confirmDeleteBook(book.id);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      PopupMenuItem(value: 'rename', child: Text('Rename')),
+                      PopupMenuItem(value: 'delete', child: Text('Delete')),
+                    ],
+                  ),
                   onTap: () {
                     final bookBloc = context.read<BookBloc>();
                     Navigator.push(
