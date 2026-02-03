@@ -8,13 +8,11 @@ class AuthService {
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    print('Retrieved token: $token');
     return token;
   }
 
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
-    print('Saving token: $token');
     await prefs.setString('token', token);
   }
 

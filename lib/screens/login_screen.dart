@@ -62,10 +62,50 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 Center(
                   child: SizedBox(
-                    height: 220,
-                    child: Image.network(
-                      'https://cdn-icons-png.flaticon.com/512/6310/6310812.png',
-                      fit: BoxFit.contain,
+                    height: 250,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          width: 240,
+                          height: 240,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE8EDF5),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Container(
+                          width: 180,
+                          height: 180,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF9DB2CE),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.account_balance_wallet,
+                            size: 90,
+                            color: Color(0xFF1E2D4A),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 25,
+                          right: 25,
+                          child: Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF2E7D32),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 3),
+                            ),
+                            child: const Icon(
+                              Icons.trending_up,
+                              size: 32,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

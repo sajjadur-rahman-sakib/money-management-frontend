@@ -8,12 +8,10 @@ class ProfileService {
 
   Future<Map<String, dynamic>> getProfile() async {
     String? token = await _authService.getToken();
-    print('Token used for getProfile: $token');
     var response = await http.get(
       AppUrls.uri(AppUrls.profile),
       headers: {'Authorization': 'Bearer $token'},
     );
-    print('getProfile response: ${response.statusCode} - ${response.body}');
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     }
