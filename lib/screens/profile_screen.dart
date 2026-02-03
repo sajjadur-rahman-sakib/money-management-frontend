@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/bloc/profile_bloc.dart';
 import 'package:money/services/auth_service.dart';
 import 'package:money/screens/login_screen.dart';
+import 'package:money/screens/change_password.dart';
 import 'package:money/utils/app_urls.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -71,7 +72,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onBackgroundImageError: (exception, stackTrace) {
                               debugPrint('Image load error: $exception');
                             },
-                            child: Icon(Icons.person, size: 40),
                           )
                         : CircleAvatar(
                             radius: 50,
@@ -91,6 +91,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: const TextStyle(fontSize: 16),
                     ),
                     const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const ChangePasswordScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text('Change Password'),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () async {
                         await AuthService().logout();

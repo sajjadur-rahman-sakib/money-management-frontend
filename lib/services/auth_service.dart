@@ -126,6 +126,36 @@ class AuthService {
     }
   }
 
+  Future<String?> changePassword(
+    String currentPassword,
+    String newPassword,
+    String confirmPassword,
+  ) async {
+    try {
+      String? token = await getToken();
+      var response = await http.post(
+        AppUrls.uri(AppUrls.changePassword),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({
+          'current_password': currentPassword,
+          'new_password': newPassword,
+          'confirm_password': confirmPassword,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return null;
+      } else {
+        return 'Change password failed: ${response.statusCode} - ${response.body}';
+      }
+    } catch (e) {
+      return 'Change password error: ${e.toString()}';
+    }
+  }
+
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');

@@ -13,7 +13,8 @@ class AppUrls {
   static const String getBooks = '/get-books';
   static const String createTransaction = '/create-transaction';
   static const String bookDetails = '/book-details';
-  static const String profile = '/profile';
+  static const String profile = '/user-profile';
+  static const String changePassword = '/change-password';
 
   static Uri uri(String path) => Uri.parse('$baseUrl$path');
 

@@ -47,6 +47,26 @@ class AuthController {
     return await _authService.login(email, password);
   }
 
+  Future<String?> changePassword(
+    String currentPassword,
+    String newPassword,
+    String confirmPassword,
+  ) async {
+    if (currentPassword.isEmpty ||
+        newPassword.isEmpty ||
+        confirmPassword.isEmpty) {
+      return 'All fields are required';
+    }
+    if (newPassword != confirmPassword) {
+      return 'Passwords do not match';
+    }
+    return await _authService.changePassword(
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    );
+  }
+
   Future<void> saveToken(String token) async {
     await _authService.saveToken(token);
   }

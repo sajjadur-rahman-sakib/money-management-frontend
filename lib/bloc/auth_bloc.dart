@@ -26,6 +26,15 @@ class LoginEvent extends AuthEvent {
   LoginEvent(this.email, this.password);
 }
 
+class ChangePasswordEvent extends AuthEvent {
+  final String currentPassword, newPassword, confirmPassword;
+  ChangePasswordEvent(
+    this.currentPassword,
+    this.newPassword,
+    this.confirmPassword,
+  );
+}
+
 abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
@@ -44,6 +53,11 @@ class OtpVerified extends AuthState {
 class LoginSuccess extends AuthState {
   final Map<String, dynamic> user;
   LoginSuccess(this.user);
+}
+
+class ChangePasswordSuccess extends AuthState {
+  final String message;
+  ChangePasswordSuccess(this.message);
 }
 
 class AuthError extends AuthState {
@@ -131,6 +145,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } catch (e) {
         emit(AuthError('Login error: ${e.toString()}'));
+      }
+    });
+
+    on<ChangePasswordEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        String? error = await _authController.changePassword(
+          event.currentPassword,
+          event.newPassword,
+          event.confirmPassword,
+        );
+        if (error == null) {
+          emit(ChangePasswordSuccess('Password updated'));
+        } else {
+          emit(AuthError(error));
+        }
+      } catch (e) {
+        emit(AuthError('Change password error: ${e.toString()}'));
       }
     });
   }
