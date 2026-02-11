@@ -9,6 +9,9 @@ class AppUrls {
   static const String resendOtp = '/resend-otp';
   static const String verifyOtp = '/verify-otp';
   static const String login = '/user-login';
+  static const String forgotPassword = '/forgot-password';
+  static const String verifyForgotPasswordOtp = '/forgot-otp';
+  static const String resetPassword = '/reset-password';
   static const String createBook = '/create-book';
   static const String getBooks = '/get-books';
   static const String updateBook = '/update-book';

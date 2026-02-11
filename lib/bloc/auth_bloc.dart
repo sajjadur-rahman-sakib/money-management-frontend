@@ -35,6 +35,26 @@ class ChangePasswordEvent extends AuthEvent {
   );
 }
 
+class ForgotPasswordEvent extends AuthEvent {
+  final String email;
+  ForgotPasswordEvent(this.email);
+}
+
+class ForgotOtpEvent extends AuthEvent {
+  final String email, otp;
+  ForgotOtpEvent(this.email, this.otp);
+}
+
+class ResetPasswordEvent extends AuthEvent {
+  final String email, otp, newPassword, confirmPassword;
+  ResetPasswordEvent(
+    this.email,
+    this.otp,
+    this.newPassword,
+    this.confirmPassword,
+  );
+}
+
 abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
@@ -59,6 +79,16 @@ class ChangePasswordSuccess extends AuthState {
   final String message;
   ChangePasswordSuccess(this.message);
 }
+
+class ForgotPasswordOtpSent extends AuthState {}
+
+class ForgotOtpVerified extends AuthState {
+  final String email;
+  final String otp;
+  ForgotOtpVerified(this.email, this.otp);
+}
+
+class ResetPasswordSuccess extends AuthState {}
 
 class AuthError extends AuthState {
   final String message;
@@ -163,6 +193,56 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       } catch (e) {
         emit(AuthError('Change password error: ${e.toString()}'));
+      }
+    });
+
+    on<ForgotPasswordEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        String? error = await _authController.forgotPassword(event.email);
+        if (error == null) {
+          emit(ForgotPasswordOtpSent());
+        } else {
+          emit(AuthError(error));
+        }
+      } catch (e) {
+        emit(AuthError('Forgot password error: ${e.toString()}'));
+      }
+    });
+
+    on<ForgotOtpEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        String? error = await _authController.verifyForgotPasswordOtp(
+          event.email,
+          event.otp,
+        );
+        if (error == null) {
+          emit(ForgotOtpVerified(event.email, event.otp));
+        } else {
+          emit(AuthError(error));
+        }
+      } catch (e) {
+        emit(AuthError('Verify OTP error: ${e.toString()}'));
+      }
+    });
+
+    on<ResetPasswordEvent>((event, emit) async {
+      emit(AuthLoading());
+      try {
+        String? error = await _authController.resetPassword(
+          event.email,
+          event.otp,
+          event.newPassword,
+          event.confirmPassword,
+        );
+        if (error == null) {
+          emit(ResetPasswordSuccess());
+        } else {
+          emit(AuthError(error));
+        }
+      } catch (e) {
+        emit(AuthError('Reset password error: ${e.toString()}'));
       }
     });
   }

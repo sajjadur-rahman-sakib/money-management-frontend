@@ -74,4 +74,33 @@ class AuthController {
   Future<void> saveUser(Map<String, dynamic> user) async {
     await _authService.saveUser(user);
   }
+
+  Future<String?> forgotPassword(String email) async {
+    if (email.isEmpty) {
+      return 'Email is required';
+    }
+    return await _authService.forgotPassword(email);
+  }
+
+  Future<String?> verifyForgotPasswordOtp(String email, String otp) async {
+    if (email.isEmpty || otp.isEmpty) {
+      return 'Email and OTP are required';
+    }
+    return await _authService.forgotOtp(email, otp);
+  }
+
+  Future<String?> resetPassword(
+    String email,
+    String otp,
+    String newPassword,
+    String confirmPassword,
+  ) async {
+    if (email.isEmpty || otp.isEmpty || newPassword.isEmpty) {
+      return 'All fields are required';
+    }
+    if (newPassword != confirmPassword) {
+      return 'Passwords do not match';
+    }
+    return await _authService.resetPassword(email, otp, newPassword);
+  }
 }

@@ -163,4 +163,69 @@ class AuthService {
     await prefs.remove('token');
     await prefs.remove('user');
   }
+
+  Future<String?> forgotPassword(String email) async {
+    try {
+      var response = await http.post(
+        AppUrls.uri(AppUrls.forgotPassword),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+
+      if (response.statusCode == 200) {
+        return null;
+      } else {
+        return parseErrorMessage(response.body, fallback: 'Failed to send OTP');
+      }
+    } catch (e) {
+      return 'Forgot password error: ${e.toString()}';
+    }
+  }
+
+  Future<String?> forgotOtp(String email, String otp) async {
+    try {
+      var response = await http.post(
+        AppUrls.uri(AppUrls.verifyForgotPasswordOtp),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'otp': otp}),
+      );
+
+      if (response.statusCode == 200) {
+        return null;
+      } else {
+        return parseErrorMessage(response.body, fallback: 'Invalid OTP');
+      }
+    } catch (e) {
+      return 'Verify OTP error: ${e.toString()}';
+    }
+  }
+
+  Future<String?> resetPassword(
+    String email,
+    String otp,
+    String newPassword,
+  ) async {
+    try {
+      var response = await http.post(
+        AppUrls.uri(AppUrls.resetPassword),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'otp': otp,
+          'new_password': newPassword,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return null;
+      } else {
+        return parseErrorMessage(
+          response.body,
+          fallback: 'Reset password failed',
+        );
+      }
+    } catch (e) {
+      return 'Reset password error: ${e.toString()}';
+    }
+  }
 }

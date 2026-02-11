@@ -1,22 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/screens/forgot_password.dart';
-import 'package:money/screens/signup_screen.dart';
-import '../bloc/auth_bloc.dart';
-import 'book_screen.dart';
+import 'package:money/bloc/auth_bloc.dart';
+import 'package:money/screens/login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ResetPasswordScreen extends StatefulWidget {
+  final String email;
+  final String otp;
+
+  const ResetPasswordScreen({
+    super.key,
+    required this.email,
+    required this.otp,
+  });
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  bool _obscureNew = true;
+  bool _obscureConfirm = true;
+
+  @override
+  void dispose() {
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,19 +48,21 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Welcome',
+          'Reset Password',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is LoginSuccess) {
-            Navigator.pushReplacement(
+          if (state is ResetPasswordSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Password reset successfully')),
+            );
+            Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                builder: (context) => BookScreen(user: state.user),
-              ),
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+              (route) => false,
             );
           } else if (state is AuthError) {
             ScaffoldMessenger.of(
@@ -60,98 +76,73 @@ class _LoginScreenState extends State<LoginScreen> {
             key: _formKey,
             child: Column(
               children: [
-                const SizedBox(height: 20),
+                const SizedBox(height: 60),
                 Center(
                   child: SizedBox(
-                    height: 250,
+                    height: 200,
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          width: 240,
-                          height: 240,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE8EDF5),
+                          width: 180,
+                          height: 180,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFE8EDF5),
                             shape: BoxShape.circle,
                           ),
                         ),
                         Container(
-                          width: 180,
-                          height: 180,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF9DB2CE),
+                          width: 130,
+                          height: 130,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF9DB2CE),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
-                            Icons.account_balance_wallet,
-                            size: 90,
+                            Icons.lock_outline,
+                            size: 70,
                             color: Color(0xFF1E2D4A),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 25,
-                          right: 25,
-                          child: Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF2E7D32),
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 3),
-                            ),
-                            child: const Icon(
-                              Icons.trending_up,
-                              size: 32,
-                              color: Colors.white,
-                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 40),
+                const Text(
+                  'Enter your new password',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+                const SizedBox(height: 40),
 
                 _buildShadowField(
-                  controller: _emailController,
-                  hint: 'Email',
-                  validator: (value) => value!.isEmpty ? 'Enter email' : null,
+                  controller: _newPasswordController,
+                  hint: 'New Password',
+                  isPassword: true,
+                  obscureText: _obscureNew,
+                  toggleVisibility: () =>
+                      setState(() => _obscureNew = !_obscureNew),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Enter new password' : null,
                 ),
                 const SizedBox(height: 20),
                 _buildShadowField(
-                  controller: _passwordController,
-                  hint: 'Password',
+                  controller: _confirmPasswordController,
+                  hint: 'Confirm Password',
                   isPassword: true,
-                  obscureText: _obscurePassword,
+                  obscureText: _obscureConfirm,
                   toggleVisibility: () =>
-                      setState(() => _obscurePassword = !_obscurePassword),
-                  validator: (value) =>
-                      value!.isEmpty ? 'Enter password' : null,
+                      setState(() => _obscureConfirm = !_obscureConfirm),
+                  validator: (value) {
+                    if (value!.isEmpty) return 'Confirm your password';
+                    if (value != _newPasswordController.text) {
+                      return 'Passwords do not match';
+                    }
+                    return null;
+                  },
                 ),
-                const SizedBox(height: 15),
-
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ForgotPasswordScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF2D4379),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 50),
+                const SizedBox(height: 60),
 
                 BlocBuilder<AuthBloc, AuthState>(
                   builder: (context, state) {
@@ -171,9 +162,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             : () {
                                 if (_formKey.currentState!.validate()) {
                                   context.read<AuthBloc>().add(
-                                    LoginEvent(
-                                      _emailController.text,
-                                      _passwordController.text,
+                                    ResetPasswordEvent(
+                                      widget.email,
+                                      widget.otp,
+                                      _newPasswordController.text,
+                                      _confirmPasswordController.text,
                                     ),
                                   );
                                 }
@@ -183,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                               )
                             : const Text(
-                                'Login',
+                                'Reset Password',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -193,32 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 60),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Don't have an account ? "),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SignupScreen(),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        "Signup",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2D4379),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
               ],
             ),
           ),
