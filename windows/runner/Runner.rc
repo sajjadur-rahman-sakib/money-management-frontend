@@ -92,7 +92,7 @@ BEGIN
             VALUE "CompanyName", "com.sakib" "\0"
             VALUE "FileDescription", "money" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "money" "\0"
+            VALUE "InternalName", "com.mdsajjadurrahmansakib.cashflow" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.sakib. All rights reserved." "\0"
             VALUE "OriginalFilename", "money.exe" "\0"
             VALUE "ProductName", "money" "\0"
