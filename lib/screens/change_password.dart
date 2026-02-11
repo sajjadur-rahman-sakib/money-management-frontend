@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/bloc/auth_bloc.dart';
+import 'package:money/utils/app_snackbar.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -51,14 +52,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is ChangePasswordSuccess) {
-            ScaffoldMessenger.of(
+            AppSnackbar.showSuccess(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+              'Your password has been updated successfully.',
+            );
             Navigator.pop(context);
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            AppSnackbar.showError(context, state.message);
           }
         },
         child: SingleChildScrollView(
@@ -119,12 +119,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             : () {
                                 if (_formKey.currentState!.validate()) {
                                   context.read<AuthBloc>().add(
-                                        ChangePasswordEvent(
-                                          _currentController.text,
-                                          _newController.text,
-                                          _confirmController.text,
-                                        ),
-                                      );
+                                    ChangePasswordEvent(
+                                      _currentController.text,
+                                      _newController.text,
+                                      _confirmController.text,
+                                    ),
+                                  );
                                 }
                               },
                         child: state is AuthLoading

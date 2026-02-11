@@ -66,10 +66,13 @@ class AuthService {
       if (response.statusCode == 200) {
         return null;
       } else {
-        return parseErrorMessage(responseBody, fallback: 'Signup failed');
+        return parseErrorMessage(
+          responseBody,
+          fallback: 'Unable to create account. Please try again.',
+        );
       }
     } catch (e) {
-      return 'Signup error: ${e.toString()}';
+      return parseExceptionMessage(e);
     }
   }
 
@@ -84,10 +87,13 @@ class AuthService {
       if (response.statusCode == 200) {
         return null;
       } else {
-        return parseErrorMessage(response.body, fallback: 'Resend OTP failed');
+        return parseErrorMessage(
+          response.body,
+          fallback: 'Unable to resend verification code. Please try again.',
+        );
       }
     } catch (e) {
-      return 'Resend OTP error: ${e.toString()}';
+      return parseExceptionMessage(e);
     }
   }
 
@@ -101,10 +107,13 @@ class AuthService {
       if (response.statusCode == 200) {
         return null;
       } else {
-        return parseErrorMessage(response.body, fallback: 'Verify OTP failed');
+        return parseErrorMessage(
+          response.body,
+          fallback: 'Invalid verification code. Please try again.',
+        );
       }
     } catch (e) {
-      return 'Verify OTP error: ${e.toString()}';
+      return parseExceptionMessage(e);
     }
   }
 
@@ -150,11 +159,11 @@ class AuthService {
       } else {
         return parseErrorMessage(
           response.body,
-          fallback: 'Change password failed',
+          fallback: 'Unable to change password. Please try again.',
         );
       }
     } catch (e) {
-      return 'Change password error: ${e.toString()}';
+      return parseExceptionMessage(e);
     }
   }
 
@@ -175,10 +184,14 @@ class AuthService {
       if (response.statusCode == 200) {
         return null;
       } else {
-        return parseErrorMessage(response.body, fallback: 'Failed to send OTP');
+        return parseErrorMessage(
+          response.body,
+          fallback:
+              'Unable to send verification code. Please check your email and try again.',
+        );
       }
     } catch (e) {
-      return 'Forgot password error: ${e.toString()}';
+      return parseExceptionMessage(e);
     }
   }
 
@@ -193,10 +206,13 @@ class AuthService {
       if (response.statusCode == 200) {
         return null;
       } else {
-        return parseErrorMessage(response.body, fallback: 'Invalid OTP');
+        return parseErrorMessage(
+          response.body,
+          fallback: 'Invalid verification code. Please check and try again.',
+        );
       }
     } catch (e) {
-      return 'Verify OTP error: ${e.toString()}';
+      return parseExceptionMessage(e);
     }
   }
 
@@ -221,11 +237,11 @@ class AuthService {
       } else {
         return parseErrorMessage(
           response.body,
-          fallback: 'Reset password failed',
+          fallback: 'Unable to reset password. Please try again.',
         );
       }
     } catch (e) {
-      return 'Reset password error: ${e.toString()}';
+      return parseExceptionMessage(e);
     }
   }
 }

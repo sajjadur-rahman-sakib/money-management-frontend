@@ -18,7 +18,10 @@ class ProfileService {
       return jsonDecode(response.body);
     }
     throw Exception(
-      parseErrorMessage(response.body, fallback: 'Failed to load profile'),
+      parseErrorMessage(
+        response.body,
+        fallback: 'Unable to load profile. Please try again.',
+      ),
     );
   }
 
@@ -48,7 +51,10 @@ class ProfileService {
       return jsonDecode(responseBody) as Map<String, dynamic>;
     }
     throw Exception(
-      parseErrorMessage(responseBody, fallback: 'Failed to update profile'),
+      parseErrorMessage(
+        responseBody,
+        fallback: 'Unable to update profile. Please try again.',
+      ),
     );
   }
 }

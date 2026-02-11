@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/controllers/book_controller.dart';
 import 'package:money/controllers/transaction_controller.dart';
 import 'package:money/models/book_model.dart';
+import 'package:money/utils/error_parser.dart';
 
 abstract class BookEvent {}
 
@@ -86,7 +87,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         var books = await _bookController.fetchBooks();
         emit(BooksLoaded(books));
       } catch (e) {
-        emit(BookError(e.toString()));
+        emit(BookError(parseExceptionMessage(e)));
       }
     });
 
@@ -96,7 +97,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         await _bookController.createBook(event.name);
         add(FetchBooksEvent());
       } catch (e) {
-        emit(BookError(e.toString()));
+        emit(BookError(parseExceptionMessage(e)));
       }
     });
 
@@ -106,7 +107,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         var data = await _transactionController.fetchBookDetails(event.bookId);
         emit(BookDetailsLoaded(data));
       } catch (e) {
-        emit(BookError(e.toString()));
+        emit(BookError(parseExceptionMessage(e)));
       }
     });
 
@@ -116,7 +117,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         await _bookController.updateBook(event.bookId, event.name);
         add(FetchBooksEvent());
       } catch (e) {
-        emit(BookError(e.toString()));
+        emit(BookError(parseExceptionMessage(e)));
       }
     });
 
@@ -126,7 +127,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         await _bookController.deleteBook(event.bookId);
         add(FetchBooksEvent());
       } catch (e) {
-        emit(BookError(e.toString()));
+        emit(BookError(parseExceptionMessage(e)));
       }
     });
 
@@ -141,7 +142,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         );
         add(FetchBookDetailsEvent(event.bookId));
       } catch (e) {
-        emit(BookError(e.toString()));
+        emit(BookError(parseExceptionMessage(e)));
       }
     });
 
@@ -155,7 +156,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         );
         add(FetchBookDetailsEvent(event.bookId));
       } catch (e) {
-        emit(BookError(e.toString()));
+        emit(BookError(parseExceptionMessage(e)));
       }
     });
 
@@ -165,7 +166,7 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         await _transactionController.deleteTransaction(event.transactionId);
         add(FetchBookDetailsEvent(event.bookId));
       } catch (e) {
-        emit(BookError(e.toString()));
+        emit(BookError(parseExceptionMessage(e)));
       }
     });
   }

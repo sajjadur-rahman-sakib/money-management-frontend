@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/controllers/profile_controller.dart';
 import 'package:money/services/auth_service.dart';
+import 'package:money/utils/error_parser.dart';
 
 abstract class ProfileEvent {}
 
@@ -53,7 +54,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         var profile = await _controller.fetchProfile();
         emit(ProfileLoaded(profile));
       } catch (e) {
-        emit(ProfileError(e.toString()));
+        emit(ProfileError(parseExceptionMessage(e)));
       }
     });
 
@@ -67,7 +68,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         await _authService.saveUser(profile);
         emit(ProfileUpdated(profile));
       } catch (e) {
-        emit(ProfileUpdateError(e.toString()));
+        emit(ProfileUpdateError(parseExceptionMessage(e)));
       }
     });
   }

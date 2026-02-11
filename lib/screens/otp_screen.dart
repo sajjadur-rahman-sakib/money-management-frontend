@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/bloc/auth_bloc.dart';
 import 'package:money/screens/login_screen.dart';
+import 'package:money/utils/app_snackbar.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -40,18 +41,21 @@ class _OtpScreenState extends State<OtpScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is OtpVerified) {
+            AppSnackbar.showSuccess(
+              context,
+              'Email verified successfully! You can now log in.',
+            );
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const LoginScreen()),
             );
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            AppSnackbar.showError(context, state.message);
           } else if (state is OtpSent) {
-            ScaffoldMessenger.of(
+            AppSnackbar.showSuccess(
               context,
-            ).showSnackBar(const SnackBar(content: Text('OTP resent')));
+              'A new verification code has been sent to your email.',
+            );
           }
         },
         child: SingleChildScrollView(

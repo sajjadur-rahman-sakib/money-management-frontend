@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/bloc/auth_bloc.dart';
 import 'package:money/screens/reset_password.dart';
+import 'package:money/utils/app_snackbar.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -49,8 +50,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         listener: (context, state) {
           if (state is ForgotPasswordOtpSent) {
             setState(() => _otpSent = true);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('OTP sent to your email')),
+            AppSnackbar.showSuccess(
+              context,
+              'A verification code has been sent to your email.',
             );
           } else if (state is ForgotOtpVerified) {
             Navigator.pushReplacement(
@@ -61,9 +63,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
             );
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            AppSnackbar.showError(context, state.message);
           }
         },
         child: SingleChildScrollView(

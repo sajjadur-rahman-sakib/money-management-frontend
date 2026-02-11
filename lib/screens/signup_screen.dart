@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:money/bloc/auth_bloc.dart';
 import 'package:money/screens/login_screen.dart';
 import 'package:money/screens/otp_screen.dart';
+import 'package:money/utils/app_snackbar.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -60,6 +61,10 @@ class _SignupScreenState extends State<SignupScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is SignupSuccess) {
+            AppSnackbar.showSuccess(
+              context,
+              'Account created! Please verify your email.',
+            );
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -67,9 +72,7 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
             );
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            AppSnackbar.showError(context, state.message);
           }
         },
         child: SingleChildScrollView(
@@ -193,12 +196,9 @@ class _SignupScreenState extends State<SignupScreen> {
                             : () {
                                 if (_formKey.currentState!.validate()) {
                                   if (_image == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Please select a profile image',
-                                        ),
-                                      ),
+                                    AppSnackbar.showWarning(
+                                      context,
+                                      'Please select a profile photo to continue.',
                                     );
                                     return;
                                   }

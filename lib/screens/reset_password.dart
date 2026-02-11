@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/bloc/auth_bloc.dart';
 import 'package:money/screens/login_screen.dart';
+import 'package:money/utils/app_snackbar.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String email;
@@ -56,8 +57,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is ResetPasswordSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Password reset successfully')),
+            AppSnackbar.showSuccess(
+              context,
+              'Your password has been reset successfully. You can now log in with your new password.',
             );
             Navigator.pushAndRemoveUntil(
               context,
@@ -65,9 +67,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               (route) => false,
             );
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            AppSnackbar.showError(context, state.message);
           }
         },
         child: SingleChildScrollView(

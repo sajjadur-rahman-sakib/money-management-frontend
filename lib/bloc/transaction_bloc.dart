@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/controllers/transaction_controller.dart';
+import 'package:money/utils/error_parser.dart';
 
 abstract class TransactionEvent {}
 
@@ -60,7 +61,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
         var data = await _controller.fetchBookDetails(event.bookId);
         emit(TransactionLoaded(data));
       } catch (e) {
-        emit(TransactionError(e.toString()));
+        emit(TransactionError(parseExceptionMessage(e)));
       }
     });
 
@@ -75,7 +76,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
         );
         add(FetchTransactionEvent(event.bookId));
       } catch (e) {
-        emit(TransactionError(e.toString()));
+        emit(TransactionError(parseExceptionMessage(e)));
       }
     });
 
@@ -89,7 +90,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
         );
         add(FetchTransactionEvent(event.bookId));
       } catch (e) {
-        emit(TransactionError(e.toString()));
+        emit(TransactionError(parseExceptionMessage(e)));
       }
     });
 
@@ -99,7 +100,7 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
         await _controller.deleteTransaction(event.transactionId);
         add(FetchTransactionEvent(event.bookId));
       } catch (e) {
-        emit(TransactionError(e.toString()));
+        emit(TransactionError(parseExceptionMessage(e)));
       }
     });
   }

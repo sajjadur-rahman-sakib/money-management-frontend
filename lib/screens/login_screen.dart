@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/screens/forgot_password.dart';
 import 'package:money/screens/signup_screen.dart';
+import 'package:money/utils/app_snackbar.dart';
 import '../bloc/auth_bloc.dart';
 import 'book_screen.dart';
 
@@ -42,6 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is LoginSuccess) {
+            AppSnackbar.clearCache();
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -49,9 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             );
           } else if (state is AuthError) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+            AppSnackbar.showError(context, state.message);
           }
         },
         child: SingleChildScrollView(

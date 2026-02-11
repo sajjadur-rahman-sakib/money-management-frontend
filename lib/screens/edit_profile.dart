@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:money/bloc/profile_bloc.dart';
+import 'package:money/utils/app_snackbar.dart';
 import 'package:money/utils/app_urls.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -52,9 +53,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final nameChanged = name.isNotEmpty && name != _initialName;
 
     if (!nameChanged && _image == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Nothing to update')));
+      AppSnackbar.showInfo(context, 'No changes to save.');
       return;
     }
 
@@ -79,15 +78,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           setState(() => _saving = true);
         } else if (state is ProfileUpdated) {
           setState(() => _saving = false);
-          ScaffoldMessenger.of(
+          AppSnackbar.showSuccess(
             context,
-          ).showSnackBar(const SnackBar(content: Text('Profile updated')));
+            'Your profile has been updated successfully.',
+          );
           Navigator.pop(context, state.profile);
         } else if (state is ProfileUpdateError) {
           setState(() => _saving = false);
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.message)));
+          AppSnackbar.showError(context, state.message);
         }
       },
       child: Scaffold(

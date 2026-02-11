@@ -21,7 +21,10 @@ class TransactionService {
       return jsonDecode(response.body);
     }
     throw Exception(
-      parseErrorMessage(response.body, fallback: 'Failed to load book details'),
+      parseErrorMessage(
+        response.body,
+        fallback: 'Unable to load book details. Please try again.',
+      ),
     );
   }
 
@@ -49,7 +52,7 @@ class TransactionService {
       throw Exception(
         parseErrorMessage(
           response.body,
-          fallback: 'Failed to create transaction',
+          fallback: 'Unable to add transaction. Please try again.',
         ),
       );
     }
@@ -77,7 +80,7 @@ class TransactionService {
       throw Exception(
         parseErrorMessage(
           response.body,
-          fallback: 'Failed to update transaction',
+          fallback: 'Unable to update transaction. Please try again.',
         ),
       );
     }
@@ -97,7 +100,7 @@ class TransactionService {
       throw Exception(
         parseErrorMessage(
           response.body,
-          fallback: 'Failed to delete transaction',
+          fallback: 'Unable to delete transaction. Please try again.',
         ),
       );
     }

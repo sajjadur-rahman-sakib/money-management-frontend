@@ -19,7 +19,10 @@ class BookService {
       return data.map((e) => Book.fromJson(e)).toList();
     }
     throw Exception(
-      parseErrorMessage(response.body, fallback: 'Failed to load books'),
+      parseErrorMessage(
+        response.body,
+        fallback: 'Unable to load your books. Please try again.',
+      ),
     );
   }
 
@@ -37,7 +40,10 @@ class BookService {
       return Book.fromJson(jsonDecode(response.body));
     }
     throw Exception(
-      parseErrorMessage(response.body, fallback: 'Failed to create book'),
+      parseErrorMessage(
+        response.body,
+        fallback: 'Unable to create book. Please try again.',
+      ),
     );
   }
 
@@ -55,7 +61,10 @@ class BookService {
       return Book.fromJson(jsonDecode(response.body));
     }
     throw Exception(
-      parseErrorMessage(response.body, fallback: 'Failed to update book'),
+      parseErrorMessage(
+        response.body,
+        fallback: 'Unable to update book. Please try again.',
+      ),
     );
   }
 
@@ -71,7 +80,10 @@ class BookService {
     );
     if (response.statusCode != 200) {
       throw Exception(
-        parseErrorMessage(response.body, fallback: 'Failed to delete book'),
+        parseErrorMessage(
+          response.body,
+          fallback: 'Unable to delete book. Please try again.',
+        ),
       );
     }
   }

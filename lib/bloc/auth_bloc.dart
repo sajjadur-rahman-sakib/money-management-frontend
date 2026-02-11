@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/controllers/auth_controller.dart';
 import 'package:money/models/user_model.dart';
+import 'package:money/utils/error_parser.dart';
 
 abstract class AuthEvent {}
 
@@ -114,7 +115,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthError(error));
         }
       } catch (e) {
-        emit(AuthError(e.toString()));
+        emit(AuthError(parseExceptionMessage(e)));
       }
     });
 
@@ -128,7 +129,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthError(error));
         }
       } catch (e) {
-        emit(AuthError(e.toString()));
+        emit(AuthError(parseExceptionMessage(e)));
       }
     });
 
@@ -153,7 +154,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthError(error));
         }
       } catch (e) {
-        emit(AuthError(e.toString()));
+        emit(AuthError(parseExceptionMessage(e)));
       }
     });
 
@@ -169,12 +170,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await _authController.saveUser(userData);
           emit(LoginSuccess(user));
         } else {
-          emit(
-            AuthError('Login failed - invalid credentials or missing token'),
-          );
+          emit(AuthError(ErrorMessages.invalidCredentials));
         }
       } catch (e) {
-        emit(AuthError('Login error: ${e.toString()}'));
+        emit(AuthError(parseExceptionMessage(e)));
       }
     });
 
@@ -187,12 +186,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           event.confirmPassword,
         );
         if (error == null) {
-          emit(ChangePasswordSuccess('Password updated'));
+          emit(ChangePasswordSuccess(ErrorMessages.passwordUpdateSuccess));
         } else {
           emit(AuthError(error));
         }
       } catch (e) {
-        emit(AuthError('Change password error: ${e.toString()}'));
+        emit(AuthError(parseExceptionMessage(e)));
       }
     });
 
@@ -206,7 +205,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthError(error));
         }
       } catch (e) {
-        emit(AuthError('Forgot password error: ${e.toString()}'));
+        emit(AuthError(parseExceptionMessage(e)));
       }
     });
 
@@ -223,7 +222,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthError(error));
         }
       } catch (e) {
-        emit(AuthError('Verify OTP error: ${e.toString()}'));
+        emit(AuthError(parseExceptionMessage(e)));
       }
     });
 
@@ -242,7 +241,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           emit(AuthError(error));
         }
       } catch (e) {
-        emit(AuthError('Reset password error: ${e.toString()}'));
+        emit(AuthError(parseExceptionMessage(e)));
       }
     });
   }
