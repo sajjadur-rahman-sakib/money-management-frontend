@@ -20,15 +20,17 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _checkLogin() async {
     final authService = AuthService();
     final token = await authService.getToken();
-    if (token != null && token.isNotEmpty) {
+    final user = await authService.getUser();
+
+    if (!mounted) return;
+
+    if (token != null && token.isNotEmpty && user != null) {
       Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
         context,
-        MaterialPageRoute(builder: (context) => BookScreen(user: {})),
+        MaterialPageRoute(builder: (context) => BookScreen(user: user)),
       );
     } else {
       Navigator.pushReplacement(
-        // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );

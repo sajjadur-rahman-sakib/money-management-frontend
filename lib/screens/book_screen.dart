@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/bloc/book_bloc.dart';
 import 'package:money/models/book_model.dart';
 import 'package:money/services/auth_service.dart';
+import 'package:money/services/connectivity_service.dart';
 import 'package:money/screens/profile_screen.dart';
 import 'package:money/screens/transaction_screen.dart';
+import 'package:money/utils/app_snackbar.dart';
 import 'package:money/utils/app_urls.dart';
 
 class BookScreen extends StatefulWidget {
@@ -17,12 +20,30 @@ class BookScreen extends StatefulWidget {
 
 class _BookScreenState extends State<BookScreen> {
   Map<String, dynamic>? _cachedUser;
+  bool _isOffline = false;
+  StreamSubscription<bool>? _connectivitySubscription;
 
   @override
   void initState() {
     super.initState();
     context.read<BookBloc>().add(FetchBooksEvent());
     _loadUser();
+    _isOffline = !ConnectivityService().isConnected;
+    _connectivitySubscription = ConnectivityService().onConnectivityChanged
+        .listen((connected) {
+          if (mounted) {
+            setState(() => _isOffline = !connected);
+            if (connected) {
+              context.read<BookBloc>().add(FetchBooksEvent());
+            }
+          }
+        });
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadUser() async {
@@ -122,45 +143,67 @@ class _BookScreenState extends State<BookScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
       appBar: _buildAppBar(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 20, 16, 10),
-            child: Text(
-              "Your Books",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF2D4379),
+      body: BlocListener<BookBloc, BookState>(
+        listener: (context, state) {
+          if (state is BookOfflineSuccess) {
+            AppSnackbar.showWarning(context, state.message);
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (_isOffline)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                color: const Color(0xFFF57C00),
+                child: const Text(
+                  'You are offline. Changes will sync when connected.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 20, 16, 10),
+              child: Text(
+                "Your Books",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF2D4379),
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: BlocBuilder<BookBloc, BookState>(
-              builder: (context, state) {
-                if (state is BookLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is BooksLoaded) {
-                  if (state.books.isEmpty) {
-                    return const Center(child: Text('No books'));
+            Expanded(
+              child: BlocBuilder<BookBloc, BookState>(
+                builder: (context, state) {
+                  if (state is BookLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is BooksLoaded) {
+                    if (state.books.isEmpty) {
+                      return const Center(child: Text('No books'));
+                    }
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      itemCount: state.books.length,
+                      itemBuilder: (context, index) {
+                        Book book = state.books[index];
+                        return _buildBookTile(book: book);
+                      },
+                    );
+                  } else if (state is BookError) {
+                    return Center(child: Text(state.message));
                   }
-                  return ListView.builder(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    itemCount: state.books.length,
-                    itemBuilder: (context, index) {
-                      Book book = state.books[index];
-                      return _buildBookTile(book: book);
-                    },
-                  );
-                } else if (state is BookError) {
-                  return Center(child: Text(state.message));
-                }
-                return const Center(child: Text('No books'));
-              },
+                  return const Center(child: Text('No books'));
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: _buildBottomBar(),
     );
@@ -173,7 +216,6 @@ class _BookScreenState extends State<BookScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
@@ -298,7 +340,6 @@ class _BookScreenState extends State<BookScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),

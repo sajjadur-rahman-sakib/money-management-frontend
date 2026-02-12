@@ -114,12 +114,10 @@ String _sanitizeErrorMessage(String message) {
     }
   }
 
-  // Capitalize first letter if not already
   if (sanitized.isNotEmpty && sanitized[0].toLowerCase() == sanitized[0]) {
     sanitized = sanitized[0].toUpperCase() + sanitized.substring(1);
   }
 
-  // Ensure message ends with proper punctuation
   if (sanitized.isNotEmpty &&
       !sanitized.endsWith('.') &&
       !sanitized.endsWith('!') &&

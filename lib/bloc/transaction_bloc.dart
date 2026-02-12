@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/controllers/transaction_controller.dart';
+import 'package:money/services/connectivity_service.dart';
 import 'package:money/utils/error_parser.dart';
 
 abstract class TransactionEvent {}
@@ -43,7 +44,8 @@ class TransactionLoading extends TransactionState {}
 
 class TransactionLoaded extends TransactionState {
   final Map<String, dynamic> data;
-  TransactionLoaded(this.data);
+  final bool isOffline;
+  TransactionLoaded(this.data, {this.isOffline = false});
 }
 
 class TransactionError extends TransactionState {
@@ -51,15 +53,22 @@ class TransactionError extends TransactionState {
   TransactionError(this.message);
 }
 
+class TransactionOfflineSuccess extends TransactionState {
+  final String message;
+  TransactionOfflineSuccess(this.message);
+}
+
 class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   final TransactionController _controller = TransactionController();
+  final ConnectivityService _connectivity = ConnectivityService();
 
   TransactionBloc() : super(TransactionInitial()) {
     on<FetchTransactionEvent>((event, emit) async {
       emit(TransactionLoading());
       try {
+        final isOffline = !await _connectivity.checkConnectivity();
         var data = await _controller.fetchBookDetails(event.bookId);
-        emit(TransactionLoaded(data));
+        emit(TransactionLoaded(data, isOffline: isOffline));
       } catch (e) {
         emit(TransactionError(parseExceptionMessage(e)));
       }
@@ -74,6 +83,14 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
           event.amount,
           event.description,
         );
+        final isOffline = !_connectivity.isConnected;
+        if (isOffline) {
+          emit(
+            TransactionOfflineSuccess(
+              'Transaction saved offline. Will sync when online.',
+            ),
+          );
+        }
         add(FetchTransactionEvent(event.bookId));
       } catch (e) {
         emit(TransactionError(parseExceptionMessage(e)));
@@ -88,6 +105,14 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
           event.amount,
           event.description,
         );
+        final isOffline = !_connectivity.isConnected;
+        if (isOffline) {
+          emit(
+            TransactionOfflineSuccess(
+              'Update saved offline. Will sync when online.',
+            ),
+          );
+        }
         add(FetchTransactionEvent(event.bookId));
       } catch (e) {
         emit(TransactionError(parseExceptionMessage(e)));
@@ -98,6 +123,14 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
       emit(TransactionLoading());
       try {
         await _controller.deleteTransaction(event.transactionId);
+        final isOffline = !_connectivity.isConnected;
+        if (isOffline) {
+          emit(
+            TransactionOfflineSuccess(
+              'Delete saved offline. Will sync when online.',
+            ),
+          );
+        }
         add(FetchTransactionEvent(event.bookId));
       } catch (e) {
         emit(TransactionError(parseExceptionMessage(e)));

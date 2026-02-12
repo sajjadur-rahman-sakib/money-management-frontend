@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:money/services/connectivity_service.dart';
+import 'package:money/utils/app_snackbar.dart';
 import '../bloc/book_bloc.dart';
 
 class TransactionScreen extends StatefulWidget {
@@ -12,10 +15,31 @@ class TransactionScreen extends StatefulWidget {
 }
 
 class _TransactionScreenState extends State<TransactionScreen> {
+  bool _isOffline = false;
+  StreamSubscription<bool>? _connectivitySubscription;
+
   @override
   void initState() {
     super.initState();
     context.read<BookBloc>().add(FetchBookDetailsEvent(widget.bookId));
+    _isOffline = !ConnectivityService().isConnected;
+    _connectivitySubscription = ConnectivityService().onConnectivityChanged
+        .listen((connected) {
+          if (mounted) {
+            setState(() => _isOffline = !connected);
+            if (connected) {
+              context.read<BookBloc>().add(
+                FetchBookDetailsEvent(widget.bookId),
+              );
+            }
+          }
+        });
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription?.cancel();
+    super.dispose();
   }
 
   void _showTransactionDialog(String type) {
@@ -157,51 +181,85 @@ class _TransactionScreenState extends State<TransactionScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FC),
       appBar: _buildAppBar(),
-      body: BlocBuilder<BookBloc, BookState>(
-        builder: (context, state) {
-          if (state is BookLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is BookDetailsLoaded) {
-            final data = state.data;
-            final book = data['book'];
-            final transactions = data['transactions'] as List;
-            final balance = (book['balance'] as num).toDouble();
-            final totalIn = _calculateTotalIn(transactions);
-            final totalOut = _calculateTotalOut(transactions);
+      body: BlocListener<BookBloc, BookState>(
+        listener: (context, state) {
+          if (state is BookOfflineSuccess) {
+            AppSnackbar.showWarning(context, state.message);
+          }
+        },
+        child: Column(
+          children: [
+            if (_isOffline)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                color: const Color(0xFFF57C00),
+                child: const Text(
+                  'You are offline. Changes will sync when connected.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            Expanded(
+              child: BlocBuilder<BookBloc, BookState>(
+                builder: (context, state) {
+                  if (state is BookLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is BookDetailsLoaded) {
+                    final data = state.data;
+                    final book = data['book'] ?? {};
+                    final transactions = data['transactions'] as List;
+                    final balance =
+                        (book['balance'] as num?)?.toDouble() ?? 0.0;
+                    final totalIn = _calculateTotalIn(transactions);
+                    final totalOut = _calculateTotalOut(transactions);
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.only(top: 16, bottom: 100),
-                      children: [
-                        _buildSummaryCard(balance, totalIn, totalOut),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          child: Center(
-                            child: Text(
-                              "Showing ${transactions.length} entries",
-                              style: const TextStyle(
-                                color: Color(0xFF2D4379),
-                                fontSize: 13,
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: ListView(
+                              padding: const EdgeInsets.only(
+                                top: 16,
+                                bottom: 100,
                               ),
+                              children: [
+                                _buildSummaryCard(balance, totalIn, totalOut),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Showing ${transactions.length} entries",
+                                      style: const TextStyle(
+                                        color: Color(0xFF2D4379),
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                ..._buildTransactionList(transactions),
+                              ],
                             ),
                           ),
-                        ),
-                        ..._buildTransactionList(transactions),
-                      ],
-                    ),
-                  ),
-                ],
+                        ],
+                      ),
+                    );
+                  } else if (state is BookError) {
+                    return Center(child: Text(state.message));
+                  }
+                  return const Center(child: Text('No transactions'));
+                },
               ),
-            );
-          } else if (state is BookError) {
-            return Center(child: Text(state.message));
-          }
-          return const Center(child: Text('No transactions'));
-        },
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: _buildBottomBar(),
     );
@@ -279,8 +337,9 @@ class _TransactionScreenState extends State<TransactionScreen> {
           String bookName = 'Book Details';
           double balance = 0;
           if (state is BookDetailsLoaded) {
-            bookName = state.data['book']['name'] ?? 'Book Details';
-            balance = (state.data['book']['balance'] as num).toDouble();
+            bookName = state.data['book']?['name'] ?? 'Book Details';
+            balance =
+                (state.data['book']?['balance'] as num?)?.toDouble() ?? 0.0;
           }
           return Row(
             mainAxisSize: MainAxisSize.min,
@@ -320,7 +379,6 @@ class _TransactionScreenState extends State<TransactionScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 1,

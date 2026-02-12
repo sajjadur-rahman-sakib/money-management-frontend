@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/bloc/profile_bloc.dart';
 import 'package:money/services/auth_service.dart';
+import 'package:money/services/sync_service.dart';
 import 'package:money/screens/login_screen.dart';
 import 'package:money/screens/change_password.dart';
 import 'package:money/screens/edit_profile.dart';
@@ -68,7 +69,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
-                    // Profile Image Section
                     GestureDetector(
                       onTap: () async {
                         final updated = await Navigator.push(
@@ -79,7 +79,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         );
                         if (updated != null) {
-                          // ignore: use_build_context_synchronously
                           context.read<ProfileBloc>().add(FetchProfileEvent());
                         }
                       },
@@ -147,7 +146,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 30),
 
-                    // Info Cards
                     _buildInfoCard(
                       icon: Icons.person_outline,
                       text: userName,
@@ -161,7 +159,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         );
                         if (updated != null) {
-                          // ignore: use_build_context_synchronously
                           context.read<ProfileBloc>().add(FetchProfileEvent());
                         }
                       },
@@ -195,10 +192,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       isArrow: true,
                       isLogout: true,
                       onTap: () async {
+                        SyncService().stopListening();
                         await AuthService().logout();
                         if (mounted) {
                           Navigator.pushReplacement(
-                            // ignore: use_build_context_synchronously
                             context,
                             MaterialPageRoute(
                               builder: (context) => const LoginScreen(),
@@ -237,7 +234,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
-                // ignore: deprecated_member_use
                 color: Colors.grey.withOpacity(0.1),
                 blurRadius: 5,
                 spreadRadius: 1,
@@ -273,7 +269,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            // ignore: deprecated_member_use
             color: Colors.grey.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 2,

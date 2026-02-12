@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:money/controllers/book_controller.dart';
 import 'package:money/controllers/transaction_controller.dart';
 import 'package:money/models/book_model.dart';
+import 'package:money/services/connectivity_service.dart';
 import 'package:money/utils/error_parser.dart';
 
 abstract class BookEvent {}
@@ -63,12 +64,14 @@ class BookLoading extends BookState {}
 
 class BooksLoaded extends BookState {
   final List<Book> books;
-  BooksLoaded(this.books);
+  final bool isOffline;
+  BooksLoaded(this.books, {this.isOffline = false});
 }
 
 class BookDetailsLoaded extends BookState {
   final Map<String, dynamic> data;
-  BookDetailsLoaded(this.data);
+  final bool isOffline;
+  BookDetailsLoaded(this.data, {this.isOffline = false});
 }
 
 class BookError extends BookState {
@@ -76,16 +79,23 @@ class BookError extends BookState {
   BookError(this.message);
 }
 
+class BookOfflineSuccess extends BookState {
+  final String message;
+  BookOfflineSuccess(this.message);
+}
+
 class BookBloc extends Bloc<BookEvent, BookState> {
   final BookController _bookController = BookController();
   final TransactionController _transactionController = TransactionController();
+  final ConnectivityService _connectivity = ConnectivityService();
 
   BookBloc() : super(BookInitial()) {
     on<FetchBooksEvent>((event, emit) async {
       emit(BookLoading());
       try {
+        final isOffline = !await _connectivity.checkConnectivity();
         var books = await _bookController.fetchBooks();
-        emit(BooksLoaded(books));
+        emit(BooksLoaded(books, isOffline: isOffline));
       } catch (e) {
         emit(BookError(parseExceptionMessage(e)));
       }
@@ -95,6 +105,12 @@ class BookBloc extends Bloc<BookEvent, BookState> {
       emit(BookLoading());
       try {
         await _bookController.createBook(event.name);
+        final isOffline = !_connectivity.isConnected;
+        if (isOffline) {
+          emit(
+            BookOfflineSuccess('Book saved offline. Will sync when online.'),
+          );
+        }
         add(FetchBooksEvent());
       } catch (e) {
         emit(BookError(parseExceptionMessage(e)));
@@ -104,8 +120,9 @@ class BookBloc extends Bloc<BookEvent, BookState> {
     on<FetchBookDetailsEvent>((event, emit) async {
       emit(BookLoading());
       try {
+        final isOffline = !await _connectivity.checkConnectivity();
         var data = await _transactionController.fetchBookDetails(event.bookId);
-        emit(BookDetailsLoaded(data));
+        emit(BookDetailsLoaded(data, isOffline: isOffline));
       } catch (e) {
         emit(BookError(parseExceptionMessage(e)));
       }
@@ -115,6 +132,12 @@ class BookBloc extends Bloc<BookEvent, BookState> {
       emit(BookLoading());
       try {
         await _bookController.updateBook(event.bookId, event.name);
+        final isOffline = !_connectivity.isConnected;
+        if (isOffline) {
+          emit(
+            BookOfflineSuccess('Update saved offline. Will sync when online.'),
+          );
+        }
         add(FetchBooksEvent());
       } catch (e) {
         emit(BookError(parseExceptionMessage(e)));
@@ -125,6 +148,12 @@ class BookBloc extends Bloc<BookEvent, BookState> {
       emit(BookLoading());
       try {
         await _bookController.deleteBook(event.bookId);
+        final isOffline = !_connectivity.isConnected;
+        if (isOffline) {
+          emit(
+            BookOfflineSuccess('Delete saved offline. Will sync when online.'),
+          );
+        }
         add(FetchBooksEvent());
       } catch (e) {
         emit(BookError(parseExceptionMessage(e)));
@@ -140,6 +169,14 @@ class BookBloc extends Bloc<BookEvent, BookState> {
           event.amount,
           event.description,
         );
+        final isOffline = !_connectivity.isConnected;
+        if (isOffline) {
+          emit(
+            BookOfflineSuccess(
+              'Transaction saved offline. Will sync when online.',
+            ),
+          );
+        }
         add(FetchBookDetailsEvent(event.bookId));
       } catch (e) {
         emit(BookError(parseExceptionMessage(e)));
@@ -154,6 +191,12 @@ class BookBloc extends Bloc<BookEvent, BookState> {
           event.amount,
           event.description,
         );
+        final isOffline = !_connectivity.isConnected;
+        if (isOffline) {
+          emit(
+            BookOfflineSuccess('Update saved offline. Will sync when online.'),
+          );
+        }
         add(FetchBookDetailsEvent(event.bookId));
       } catch (e) {
         emit(BookError(parseExceptionMessage(e)));
@@ -164,6 +207,12 @@ class BookBloc extends Bloc<BookEvent, BookState> {
       emit(BookLoading());
       try {
         await _transactionController.deleteTransaction(event.transactionId);
+        final isOffline = !_connectivity.isConnected;
+        if (isOffline) {
+          emit(
+            BookOfflineSuccess('Delete saved offline. Will sync when online.'),
+          );
+        }
         add(FetchBookDetailsEvent(event.bookId));
       } catch (e) {
         emit(BookError(parseExceptionMessage(e)));

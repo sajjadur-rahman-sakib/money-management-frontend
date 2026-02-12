@@ -68,9 +68,10 @@ class AppSnackbar {
     _lastMessage = message;
     _lastShownTime = now;
 
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
 
-    ScaffoldMessenger.of(context).showSnackBar(
+    messenger.showSnackBar(
       SnackBar(
         content: Row(
           children: [
@@ -86,6 +87,15 @@ class AppSnackbar {
                 ),
               ),
             ),
+            GestureDetector(
+              onTap: () {
+                messenger.hideCurrentSnackBar();
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Icon(Icons.close, color: foregroundColor, size: 20),
+              ),
+            ),
           ],
         ),
         backgroundColor: backgroundColor,
@@ -95,14 +105,6 @@ class AppSnackbar {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         duration: duration,
         dismissDirection: DismissDirection.horizontal,
-        action: SnackBarAction(
-          label: 'DISMISS',
-          // ignore: deprecated_member_use
-          textColor: foregroundColor.withOpacity(0.8),
-          onPressed: () {
-            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-          },
-        ),
       ),
     );
   }

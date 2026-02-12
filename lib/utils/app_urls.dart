@@ -1,7 +1,7 @@
 class AppUrls {
   AppUrls._();
 
-  static const String baseUrl = 'http://3.106.123.214:8080';
+  static const String baseUrl = 'http://0.0.0.0:8080';
 
   static const String apiPrefix = '';
 

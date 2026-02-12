@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:money/utils/app_urls.dart';
 import 'package:money/utils/error_parser.dart';
+import 'package:money/services/cache_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -171,6 +172,7 @@ class AuthService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('token');
     await prefs.remove('user');
+    await OfflineCacheService().clearAll();
   }
 
   Future<String?> forgotPassword(String email) async {
