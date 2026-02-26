@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:money/bloc/auth_bloc.dart';
-import 'package:money/screens/login_screen.dart';
-import 'package:money/screens/otp_screen.dart';
-import 'package:money/utils/app_snackbar.dart';
+import 'package:cashflow/bloc/auth_bloc.dart';
+import 'package:cashflow/screens/login_screen.dart';
+import 'package:cashflow/screens/otp_screen.dart';
+import 'package:cashflow/utils/app_snackbar.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -46,7 +46,9 @@ class _SignupScreenState extends State<SignupScreen> {
             color: Colors.black,
             size: 20,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil('/', (route) => false),
         ),
         title: const Text(
           'Welcome',
@@ -94,6 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
+                            // ignore: deprecated_member_use
                             color: Colors.black.withOpacity(0.08),
                             blurRadius: 20,
                             offset: const Offset(0, 10),
@@ -187,6 +190,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           backgroundColor: const Color(0xFF9DB2CE),
                           shape: const StadiumBorder(),
                           elevation: 6,
+                          // ignore: deprecated_member_use
                           shadowColor: const Color(0xFF9DB2CE).withOpacity(0.5),
                         ),
                         onPressed: state is AuthLoading
@@ -237,9 +241,10 @@ class _SignupScreenState extends State<SignupScreen> {
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     GestureDetector(
-                      onTap: () => Navigator.push(
+                      onTap: () => Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => LoginScreen()),
+                        (route) => false,
                       ),
                       child: const Text(
                         "Login",
@@ -274,6 +279,7 @@ class _SignupScreenState extends State<SignupScreen> {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.04),
             blurRadius: 12,
             offset: const Offset(0, 6),

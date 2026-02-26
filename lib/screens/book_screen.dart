@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/bloc/book_bloc.dart';
-import 'package:money/models/book_model.dart';
-import 'package:money/services/auth_service.dart';
-import 'package:money/services/connectivity_service.dart';
-import 'package:money/screens/profile_screen.dart';
-import 'package:money/screens/transaction_screen.dart';
-import 'package:money/utils/app_snackbar.dart';
-import 'package:money/utils/app_urls.dart';
+import 'package:cashflow/bloc/book_bloc.dart';
+import 'package:cashflow/models/book_model.dart';
+import 'package:cashflow/services/auth_service.dart';
+import 'package:cashflow/services/connectivity_service.dart';
+import 'package:cashflow/screens/profile_screen.dart';
+import 'package:cashflow/screens/transaction_screen.dart';
+import 'package:cashflow/utils/app_snackbar.dart';
+import 'package:cashflow/utils/app_urls.dart';
 
 class BookScreen extends StatefulWidget {
   final Map<String, dynamic> user;
@@ -33,9 +33,6 @@ class _BookScreenState extends State<BookScreen> {
         .listen((connected) {
           if (mounted) {
             setState(() => _isOffline = !connected);
-            if (connected) {
-              context.read<BookBloc>().add(FetchBooksEvent());
-            }
           }
         });
   }
@@ -216,6 +213,7 @@ class _BookScreenState extends State<BookScreen> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, -2),
@@ -340,6 +338,7 @@ class _BookScreenState extends State<BookScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.04),
             blurRadius: 10,
             offset: const Offset(0, 4),

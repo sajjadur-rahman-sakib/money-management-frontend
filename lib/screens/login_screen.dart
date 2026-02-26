@@ -1,9 +1,9 @@
+import 'package:cashflow/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/screens/forgot_password.dart';
-import 'package:money/screens/signup_screen.dart';
-import 'package:money/utils/app_snackbar.dart';
-import '../bloc/auth_bloc.dart';
+import 'package:cashflow/screens/forgot_password.dart';
+import 'package:cashflow/screens/signup_screen.dart';
+import 'package:cashflow/utils/app_snackbar.dart';
 import 'book_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -26,14 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black,
-            size: 20,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
         title: const Text(
           'Welcome',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
@@ -241,6 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.04),
             blurRadius: 15,
             offset: const Offset(0, 8),

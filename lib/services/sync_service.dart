@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:money/services/auth_service.dart';
-import 'package:money/services/connectivity_service.dart';
-import 'package:money/services/cache_service.dart';
-import 'package:money/utils/app_urls.dart';
+import 'package:cashflow/services/auth_service.dart';
+import 'package:cashflow/services/connectivity_service.dart';
+import 'package:cashflow/services/cache_service.dart';
+import 'package:cashflow/utils/app_urls.dart';
 
 class SyncService {
   static final SyncService _instance = SyncService._();

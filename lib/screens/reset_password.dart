@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/bloc/auth_bloc.dart';
-import 'package:money/screens/login_screen.dart';
-import 'package:money/utils/app_snackbar.dart';
+import 'package:cashflow/bloc/auth_bloc.dart';
+import 'package:cashflow/screens/login_screen.dart';
+import 'package:cashflow/utils/app_snackbar.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String email;
@@ -209,6 +209,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.black.withOpacity(0.04),
             blurRadius: 15,
             offset: const Offset(0, 8),

@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/controllers/auth_controller.dart';
-import 'package:money/models/user_model.dart';
-import 'package:money/utils/error_parser.dart';
+import 'package:cashflow/controllers/auth_controller.dart';
+import 'package:cashflow/models/user_model.dart';
+import 'package:cashflow/utils/error_parser.dart';
 
 abstract class AuthEvent {}
 

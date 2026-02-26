@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:money/app.dart';
-import 'package:money/services/connectivity_service.dart';
-import 'package:money/services/sync_service.dart';
+import 'package:cashflow/app.dart';
+import 'package:cashflow/services/connectivity_service.dart';
+import 'package:cashflow/services/sync_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

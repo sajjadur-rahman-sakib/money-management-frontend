@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/bloc/auth_bloc.dart';
-import 'package:money/screens/login_screen.dart';
-import 'package:money/utils/app_snackbar.dart';
+import 'package:cashflow/bloc/auth_bloc.dart';
+import 'package:cashflow/screens/login_screen.dart';
+import 'package:cashflow/utils/app_snackbar.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -99,6 +99,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   borderRadius: BorderRadius.circular(30),
                   boxShadow: [
                     BoxShadow(
+                      // ignore: deprecated_member_use
                       color: Colors.black.withOpacity(0.04),
                       blurRadius: 15,
                       offset: const Offset(0, 8),
@@ -165,6 +166,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         backgroundColor: const Color(0xFF9DB2CE),
                         shape: const StadiumBorder(),
                         elevation: 8,
+                        // ignore: deprecated_member_use
                         shadowColor: const Color(0xFF9DB2CE).withOpacity(0.5),
                       ),
                       onPressed: state is AuthLoading

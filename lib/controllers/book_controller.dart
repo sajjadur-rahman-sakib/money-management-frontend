@@ -1,5 +1,5 @@
-import 'package:money/models/book_model.dart';
-import 'package:money/services/book_service.dart';
+import 'package:cashflow/models/book_model.dart';
+import 'package:cashflow/services/book_service.dart';
 
 class BookController {
   final BookService _bookService = BookService();

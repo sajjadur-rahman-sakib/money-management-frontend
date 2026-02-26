@@ -1,4 +1,4 @@
-import 'package:money/services/transaction_service.dart';
+import 'package:cashflow/services/transaction_service.dart';
 
 class TransactionController {
   final TransactionService _transactionService = TransactionService();

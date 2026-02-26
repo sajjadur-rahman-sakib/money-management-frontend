@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/controllers/profile_controller.dart';
-import 'package:money/services/auth_service.dart';
-import 'package:money/utils/error_parser.dart';
+import 'package:cashflow/controllers/profile_controller.dart';
+import 'package:cashflow/services/auth_service.dart';
+import 'package:cashflow/utils/error_parser.dart';
 
 abstract class ProfileEvent {}
 

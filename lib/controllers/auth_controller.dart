@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:money/services/auth_service.dart';
+import 'package:cashflow/services/auth_service.dart';
 
 class AuthController {
   final AuthService _authService = AuthService();

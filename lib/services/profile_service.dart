@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:money/services/auth_service.dart';
-import 'package:money/utils/app_urls.dart';
-import 'package:money/utils/error_parser.dart';
+import 'package:cashflow/services/auth_service.dart';
+import 'package:cashflow/utils/app_urls.dart';
+import 'package:cashflow/utils/error_parser.dart';
 
 class ProfileService {
   final AuthService _authService = AuthService();

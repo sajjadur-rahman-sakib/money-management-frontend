@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/controllers/transaction_controller.dart';
-import 'package:money/services/connectivity_service.dart';
-import 'package:money/utils/error_parser.dart';
+import 'package:cashflow/controllers/transaction_controller.dart';
+import 'package:cashflow/services/connectivity_service.dart';
+import 'package:cashflow/utils/error_parser.dart';
 
 abstract class TransactionEvent {}
 

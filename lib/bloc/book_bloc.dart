@@ -1,13 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/controllers/book_controller.dart';
-import 'package:money/controllers/transaction_controller.dart';
-import 'package:money/models/book_model.dart';
-import 'package:money/services/connectivity_service.dart';
-import 'package:money/utils/error_parser.dart';
+import 'dart:async';
+import 'package:cashflow/controllers/book_controller.dart';
+import 'package:cashflow/controllers/transaction_controller.dart';
+import 'package:cashflow/models/book_model.dart';
+import 'package:cashflow/services/connectivity_service.dart';
+import 'package:cashflow/services/sync_service.dart';
+import 'package:cashflow/utils/error_parser.dart';
 
 abstract class BookEvent {}
 
 class FetchBooksEvent extends BookEvent {}
+
+class SyncAndRefreshBooksEvent extends BookEvent {}
 
 class CreateBookEvent extends BookEvent {
   final String name;
@@ -88,8 +92,18 @@ class BookBloc extends Bloc<BookEvent, BookState> {
   final BookController _bookController = BookController();
   final TransactionController _transactionController = TransactionController();
   final ConnectivityService _connectivity = ConnectivityService();
+  final SyncService _syncService = SyncService();
+  StreamSubscription<bool>? _connectivitySubscription;
 
   BookBloc() : super(BookInitial()) {
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
+      connected,
+    ) {
+      if (connected) {
+        add(SyncAndRefreshBooksEvent());
+      }
+    });
+
     on<FetchBooksEvent>((event, emit) async {
       emit(BookLoading());
       try {
@@ -99,6 +113,15 @@ class BookBloc extends Bloc<BookEvent, BookState> {
       } catch (e) {
         emit(BookError(parseExceptionMessage(e)));
       }
+    });
+
+    on<SyncAndRefreshBooksEvent>((event, emit) async {
+      try {
+        final isOnline = await _connectivity.checkConnectivity();
+        if (!isOnline) return;
+        await _syncService.syncPendingOperations();
+        add(FetchBooksEvent());
+      } catch (_) {}
     });
 
     on<CreateBookEvent>((event, emit) async {
@@ -218,5 +241,11 @@ class BookBloc extends Bloc<BookEvent, BookState> {
         emit(BookError(parseExceptionMessage(e)));
       }
     });
+  }
+
+  @override
+  Future<void> close() {
+    _connectivitySubscription?.cancel();
+    return super.close();
   }
 }

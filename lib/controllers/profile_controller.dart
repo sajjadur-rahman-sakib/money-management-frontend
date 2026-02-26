@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:money/services/profile_service.dart';
+import 'package:cashflow/services/profile_service.dart';
 
 class ProfileController {
   final ProfileService _profileService = ProfileService();

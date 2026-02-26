@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:money/bloc/profile_bloc.dart';
-import 'package:money/services/auth_service.dart';
-import 'package:money/services/sync_service.dart';
-import 'package:money/screens/login_screen.dart';
-import 'package:money/screens/change_password.dart';
-import 'package:money/screens/edit_profile.dart';
-import 'package:money/utils/app_urls.dart';
+import 'package:cashflow/bloc/profile_bloc.dart';
+import 'package:cashflow/services/auth_service.dart';
+import 'package:cashflow/services/sync_service.dart';
+import 'package:cashflow/screens/login_screen.dart';
+import 'package:cashflow/screens/change_password.dart';
+import 'package:cashflow/screens/edit_profile.dart';
+import 'package:cashflow/utils/app_urls.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Map<String, dynamic>? user;
@@ -79,6 +79,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         );
                         if (updated != null) {
+                          // ignore: use_build_context_synchronously
                           context.read<ProfileBloc>().add(FetchProfileEvent());
                         }
                       },
@@ -159,6 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         );
                         if (updated != null) {
+                          // ignore: use_build_context_synchronously
                           context.read<ProfileBloc>().add(FetchProfileEvent());
                         }
                       },
@@ -196,6 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         await AuthService().logout();
                         if (mounted) {
                           Navigator.pushReplacement(
+                            // ignore: use_build_context_synchronously
                             context,
                             MaterialPageRoute(
                               builder: (context) => const LoginScreen(),
@@ -234,6 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             borderRadius: BorderRadius.circular(8),
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.grey.withOpacity(0.1),
                 blurRadius: 5,
                 spreadRadius: 1,
@@ -269,6 +273,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
+            // ignore: deprecated_member_use
             color: Colors.grey.withOpacity(0.05),
             blurRadius: 10,
             spreadRadius: 2,
